@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiQ - Pembayaran</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            background-color: #EBF3FF;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 280px;
+            background-color: #FFFFFF;
+            padding: 30px 20px;
+            border-right: 3px solid #000;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            font-size: 28px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .logo img {
+            width: 50px;
+            height: auto;
+        }
+
+        .menu-item {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #000;
+            font-weight: 600;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+        .menu-item:hover {
+            background-color: #D6E8FF;
+        }
+
+        .menu-item.active {
+            background-color: #60AFFF;
+            color: #000;
+        }
+
+        .menu-item.logout {
+            margin-top: auto;
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            padding: 30px 50px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* TOPBAR & NOTIFIKASI */
+        .topbar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #000;
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .notification-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-icon {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-dropdown {
+            display: none;
+            position: absolute;
+            top: 35px;
+            right: 0;
+            width: 300px;
+            background-color: #FFFFFF;
+            border: 1px solid #000;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .notification-dropdown.show {
+            display: block;
+        }
+
+        .notif-header {
+            background-color: #60AFFF;
+            color: #000;
+            padding: 12px 15px;
+            font-weight: 700;
+            font-size: 14px;
+            border-bottom: 1px solid #000;
+        }
+
+        .notif-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            font-size: 13px;
+            color: #333;
+            cursor: pointer;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .notif-item:hover {
+            background-color: #EBF3FF;
+        }
+
+        .notif-item:last-child {
+            border-bottom: none;
+        }
+        
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* BACK LINK */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #000;
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* BOX RINGKASAN PEMBAYARAN */
+        .summary-card {
+            background-color: #FFFFFF;
+            border: 1px solid #000;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        .summary-header {
+            padding: 20px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .summary-body {
+            padding: 0 20px 20px 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+
+        .summary-label {
+            width: 180px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .summary-value {
+            font-weight: 500;
+            color: #000;
+        }
+
+        .summary-total {
+            background-color: #EBF3FF;
+            padding: 15px 20px;
+            border-top: 1px solid #000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        /* BOX METODE PEMBAYARAN */
+        .form-card {
+            background-color: #FFFFFF;
+            border: 1px solid #000;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #000;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #000;
+        }
+
+        .input-control {
+            width: 100%;
+            background-color: #FFFFFF;
+            border: 1px solid #666;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 14px;
+            color: #000;
+            outline: none;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* INFO REKENING TUJUAN SERVIQ */
+        .bank-info-box {
+            display: none; /* Muncul jika bank dipilih */
+            background-color: #B3D9FF;
+            border: 1px solid #000;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-top: 12px;
+        }
+
+        .bank-info-box.show {
+            display: block;
+        }
+
+        .bank-info-header {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .bank-info-detail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .account-number {
+            font-size: 18px;
+            font-weight: 700;
+            color: #000;
+            letter-spacing: 0.5px;
+        }
+
+        .account-name {
+            font-size: 13px;
+            color: #222;
+            font-weight: 500;
+        }
+
+        .btn-copy {
+            background-color: #1E4E8C;
+            color: #FFF;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-copy:hover {
+            background-color: #153866;
+        }
+
+        .upload-area {
+            background-color: #F8F9FA;
+            border: 1px solid #666;
+            border-radius: 8px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #333;
+        }
+
+        .upload-area:hover {
+            background-color: #EBF3FF;
+        }
+
+        .btn-submit {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background-color: #1E4E8C;
+            color: #FFF;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover {
+            background-color: #153866;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo">
+            <img src="logo.png" alt="Logo">
+            <span>ServiQ</span>
+        </div>
+        
+        <a href="dashboard_customer.html" class="menu-item">Dashboard</a>
+        <a href="buat_permintaan.html" class="menu-item">Buat Permintaan Service</a>
+        <a href="tiket_saya.html" class="menu-item active">Tiket Saya</a>
+        <a href="riwayat_service.html" class="menu-item">Riwayat Service</a>
+        <a href="chat.html" class="menu-item">Chat</a>
+        <a href="profile.html" class="menu-item">Profile</a>
+
+        <a href="login.html" class="menu-item logout">Keluar</a>
+    </div>
+
+    <div class="main-content">
+        
+        <div class="topbar">
+            <div class="user-info">
+                <div class="notification-wrapper">
+                    <div class="notification-icon" id="bellIcon" title="Pemberitahuan">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    </div>
+                    <div class="notification-dropdown" id="notifDropdown">
+                        <div class="notif-header">Notifikasi Baru</div>
+                        <div class="notif-item"><strong>Tiket #1023:</strong> Perangkat sedang dalam perbaikan.</div>
+                        <div class="notif-item"><strong>Tiket #1025:</strong> Menunggu persetujuan biaya dari Anda.</div>
+                    </div>
+                </div>
+                
+                <div class="profile-info">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Andi
+                </div>
+            </div>
+        </div>
+
+        <a href="detail_tiket.html" class="back-link">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Kembali ke Detail Tiket
+        </a>
+
+        <!-- RINGKASAN PEMBAYARAN -->
+        <div class="summary-card">
+            <div class="summary-header">Ringkasan Pembayaran</div>
+            <div class="summary-body">
+                <div class="summary-row">
+                    <div class="summary-label">Nomor Tiket</div>
+                    <div class="summary-value">: #1023</div>
+                </div>
+                <div class="summary-row">
+                    <div class="summary-label">Perangkat</div>
+                    <div class="summary-value">: MacBook</div>
+                </div>
+                <div class="summary-row">
+                    <div class="summary-label">Estimasi Biaya</div>
+                    <div class="summary-value">: Rp 1.250.000</div>
+                </div>
+            </div>
+            <div class="summary-total">
+                <span>Total Pembayaran</span>
+                <span>Rp 1.250.000</span>
+            </div>
+        </div>
+
+        <!-- FORM METODE PEMBAYARAN -->
+        <form action="tiket_saya.html" class="form-card">
+            <div class="form-card-title">Metode Pembayaran</div>
+            
+            <div class="input-group">
+                <label>Pilih Bank Tujuan Transfer</label>
+                <select class="input-control" id="bankSelect" required>
+                    <option value="">Pilih bank tujuan...</option>
+                    <option value="bca" data-rekening="8830 1234 56" data-nama="PT ServiQ Indonesia Center">Bank BCA</option>
+                    <option value="mandiri" data-rekening="1370 0012 345" data-nama="PT ServiQ Indonesia Center">Bank Mandiri</option>
+                    <option value="bri" data-rekening="0021 0100 1234 502" data-nama="PT ServiQ Indonesia Center">Bank BRI</option>
+                </select>
+
+                <!-- Box Tampilan Rekening Tujuan ServiQ -->
+                <div class="bank-info-box" id="bankInfoBox">
+                    <div class="bank-info-header">Transfer ke Nomor Rekening Resmi ServiQ:</div>
+                    <div class="bank-info-detail">
+                        <div>
+                            <div class="account-number" id="accountNumberText">-</div>
+                            <div class="account-name" id="accountNameText">a.n PT ServiQ Indonesia Center</div>
+                        </div>
+                        <button type="button" class="btn-copy" id="btnCopy" onclick="copyRekening()">Salin</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Upload Bukti Pembayaran</label>
+                <div class="upload-area">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                    <span>Pilih atau tarik foto bukti transfer di sini<br><small style="color: #666;">Format JPG, JPEG, atau PNG (maks. 5 MB)</small></span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">Kirim Bukti Pembayaran</button>
+        </form>
+
+    </div>
+
+    <!-- Script Lonceng & Rekening Dynamic -->
+    <script>
+        // Script Lonceng Notifikasi
+        const bellIcon = document.getElementById('bellIcon');
+        const notifDropdown = document.getElementById('notifDropdown');
+
+        if (bellIcon && notifDropdown) {
+            bellIcon.addEventListener('click', function(e) {
+                notifDropdown.classList.toggle('show');
+                e.stopPropagation(); 
+            });
+
+            window.addEventListener('click', function(e) {
+                if (!notifDropdown.contains(e.target) && e.target !== bellIcon) {
+                    notifDropdown.classList.remove('show');
+                }
+            });
+        }
+
+        // Script Tampilkan Rekening Bank Otomatis
+        const bankSelect = document.getElementById('bankSelect');
+        const bankInfoBox = document.getElementById('bankInfoBox');
+        const accountNumberText = document.getElementById('accountNumberText');
+        const accountNameText = document.getElementById('accountNameText');
+
+        bankSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const rekening = selectedOption.getAttribute('data-rekening');
+            const nama = selectedOption.getAttribute('data-nama');
+
+            if (rekening) {
+                accountNumberText.innerText = rekening;
+                accountNameText.innerText = 'a.n ' + nama;
+                bankInfoBox.classList.add('show');
+            } else {
+                bankInfoBox.classList.remove('show');
+            }
+        });
+
+        // Function Salin Rekening
+        function copyRekening() {
+            const textToCopy = accountNumberText.innerText.replace(/\s+/g, '');
+            navigator.clipboard.writeText(textToCopy);
+            const btn = document.getElementById('btnCopy');
+            btn.innerText = 'Tersalin!';
+            btn.style.backgroundColor = '#5EBC8B';
+            setTimeout(() => {
+                btn.innerText = 'Salin';
+                btn.style.backgroundColor = '#1E4E8C';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

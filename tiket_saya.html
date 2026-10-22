@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiQ - Tiket Saya</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            background-color: #EBF3FF;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 280px;
+            background-color: #FFFFFF;
+            padding: 30px 20px;
+            border-right: 3px solid #000;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            font-size: 28px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .logo img {
+            width: 50px;
+            height: auto;
+        }
+
+        .menu-item {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #000;
+            font-weight: 600;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+        .menu-item:hover {
+            background-color: #D6E8FF;
+        }
+
+        .menu-item.active {
+            background-color: #60AFFF;
+            color: #000;
+        }
+
+        .menu-item.logout {
+            margin-top: auto;
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            padding: 30px 50px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* TOPBAR & NOTIFIKASI */
+        .topbar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #000;
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .notification-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-icon {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-dropdown {
+            display: none;
+            position: absolute;
+            top: 35px;
+            right: 0;
+            width: 300px;
+            background-color: #FFFFFF;
+            border: 1px solid #000;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .notification-dropdown.show {
+            display: block;
+        }
+
+        .notif-header {
+            background-color: #60AFFF;
+            color: #000;
+            padding: 12px 15px;
+            font-weight: 700;
+            font-size: 14px;
+            border-bottom: 1px solid #000;
+        }
+
+        .notif-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            font-size: 13px;
+            color: #333;
+            cursor: pointer;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .notif-item:hover {
+            background-color: #EBF3FF;
+        }
+
+        .notif-item:last-child {
+            border-bottom: none;
+        }
+        
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* HEADER */
+        .header {
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #000;
+        }
+
+        .header p {
+            font-size: 15px;
+            color: #333;
+        }
+
+        /* TOOLBAR (Search & Filter) */
+        .toolbar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background-color: #89C4FF;
+            border: 1px solid #000;
+            border-radius: 8px;
+            padding: 12px 20px;
+        }
+
+        .search-box input {
+            border: none;
+            background: none;
+            outline: none;
+            width: 100%;
+            font-size: 15px;
+            margin-left: 10px;
+            color: #000;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .search-box input::placeholder {
+            color: #333;
+        }
+
+        /* Filter Dropdown Custom */
+        .filter-wrapper {
+            position: relative;
+            min-width: 200px;
+        }
+
+        .filter-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #89C4FF;
+            border: 1px solid #000;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            height: 100%;
+        }
+
+        .filter-box-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-dropdown {
+            display: none;
+            position: absolute;
+            top: 110%;
+            right: 0;
+            width: 100%;
+            background-color: #FFFFFF;
+            border: 1px solid #000;
+            border-radius: 8px;
+            z-index: 100;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .filter-dropdown.show {
+            display: block;
+        }
+
+        .filter-item {
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #000;
+            cursor: pointer;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .filter-item:hover {
+            background-color: #D6E8FF;
+        }
+
+        .filter-item:last-child {
+            border-bottom: none;
+        }
+
+        /* TABLE */
+        .table-container {
+            background-color: #FFFFFF;
+            border-radius: 12px;
+            border: 1px solid #000;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: #FFFFFF;
+            text-align: center;
+            padding: 18px 15px;
+            border-bottom: 1px solid #000;
+            border-right: 1px solid #ddd;
+            font-weight: 600;
+            font-size: 15px;
+            color: #000;
+        }
+
+        th:last-child {
+            border-right: none;
+        }
+
+        td {
+            padding: 18px 15px;
+            border-bottom: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            font-size: 14px;
+            font-weight: 500;
+            color: #000;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        td:last-child {
+            border-right: none;
+        }
+
+        /* BADGE STATUS */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 13px;
+            color: #000;
+            min-width: 170px;
+            justify-content: flex-start;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #000;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .badge-blue { background-color: #89C4FF; }
+        .badge-yellow { background-color: #FBD288; }
+        .badge-green { background-color: #5EBC8B; }
+
+        /* BUTTON DETAIL */
+        .btn-detail {
+            background-color: #E0E0E0;
+            color: #000;
+            border: 1px solid #000;
+            padding: 8px 25px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+            display: inline-block;
+            transition: 0.3s;
+        }
+
+        .btn-detail:hover {
+            background-color: #ccc;
+        }
+
+        /* PAGINATION */
+        .pagination {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-bottom: 30px;
+        }
+
+        .page-item {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #000;
+            border-radius: 6px;
+            background-color: #FFFFFF;
+            font-weight: 600;
+            color: #000;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .page-item:hover, .page-item.active {
+            background-color: #D6E8FF;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo">
+            <img src="logo.png" alt="Logo">
+            <span>ServiQ</span>
+        </div>
+        
+        <a href="dashboard_customer.html" class="menu-item">Dashboard</a>
+        <a href="buat_permintaan.html" class="menu-item">Buat Permintaan Service</a>
+        <a href="tiket_saya.html" class="menu-item active">Tiket Saya</a>
+        <a href="riwayat_service.html" class="menu-item">Riwayat Service</a>
+        <a href="chat.html" class="menu-item">Chat</a>
+        <a href="profile.html" class="menu-item">Profile</a>
+
+        <a href="login.html" class="menu-item logout">Keluar</a>
+    </div>
+
+    <div class="main-content">
+        
+        <div class="topbar">
+            <div class="user-info">
+                <div class="notification-wrapper">
+                    <div class="notification-icon" id="bellIcon" title="Pemberitahuan">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    </div>
+                    <div class="notification-dropdown" id="notifDropdown">
+                        <div class="notif-header">Notifikasi Baru</div>
+                        <div class="notif-item"><strong>Tiket #1023:</strong> Perangkat sedang dalam perbaikan.</div>
+                        <div class="notif-item"><strong>Tiket #1025:</strong> Menunggu persetujuan biaya dari Anda.</div>
+                    </div>
+                </div>
+                
+                <div class="profile-info">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Andi
+                </div>
+            </div>
+        </div>
+
+        <div class="header">
+            <h1>Tiket Saya</h1>
+            <p>Berikut adalah daftar tiket servis kamu yang masih dalam proses.</p>
+        </div>
+
+        <div class="toolbar">
+            <div class="search-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" placeholder="Cari perangkat atau nomor tiket....">
+            </div>
+            
+            <div class="filter-wrapper">
+                <div class="filter-box" id="filterBox">
+                    <div class="filter-box-content">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                        <span id="filterText">Semua Status</span>
+                    </div>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </div>
+                <div class="filter-dropdown" id="filterDropdown">
+                    <div class="filter-item">Semua Status</div>
+                    <div class="filter-item">Dalam perbaikan</div>
+                    <div class="filter-item">Menunggu persetujuan</div>
+                    <div class="filter-item">Diagnosis</div>
+                    <div class="filter-item">QC</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>No. Tiket</th>
+                        <th>Tanggal</th>
+                        <th>Perangkat</th>
+                        <th>Keluhan</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>#1023</td>
+                        <td>1 Okt 2026</td>
+                        <td>MacBook</td>
+                        <td>Layar berkedip</td>
+                        <td>
+                            <div class="status-badge badge-blue">
+                                <div class="status-dot"></div> Dalam perbaikan
+                            </div>
+                        </td>
+                        <td><a href="detail_tiket.html" class="btn-detail">Detail</a></td>
+                    </tr>
+                    <tr>
+                        <td>#1025</td>
+                        <td>20 Sept 2026</td>
+                        <td>Laptop Asus</td>
+                        <td>Overheat</td>
+                        <td>
+                            <div class="status-badge badge-yellow">
+                                <div class="status-dot"></div> Menunggu persetujuan
+                            </div>
+                        </td>
+                        <td><a href="detail_tiket.html" class="btn-detail">Detail</a></td>
+                    </tr>
+                    <tr>
+                        <td>#1028</td>
+                        <td>5 Sept 2026</td>
+                        <td>Laptop ACER</td>
+                        <td>Ganti RAM 8 GB</td>
+                        <td>
+                            <div class="status-badge badge-blue">
+                                <div class="status-dot"></div> Diagnosis
+                            </div>
+                        </td>
+                        <td><a href="detail_tiket.html" class="btn-detail">Detail</a></td>
+                    </tr>
+                    <tr>
+                        <td>#1030</td>
+                        <td>12 Agt 2026</td>
+                        <td>MacBook</td>
+                        <td>Tidak bisa booting</td>
+                        <td>
+                            <div class="status-badge badge-green">
+                                <div class="status-dot"></div> QC
+                            </div>
+                        </td>
+                        <td><a href="detail_tiket.html" class="btn-detail">Detail</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination">
+            <a href="#" class="page-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </a>
+            <a href="#" class="page-item active">1</a>
+            <a href="#" class="page-item">2</a>
+            <a href="#" class="page-item">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        // Script Lonceng Notifikasi
+        const bellIcon = document.getElementById('bellIcon');
+        const notifDropdown = document.getElementById('notifDropdown');
+
+        if (bellIcon && notifDropdown) {
+            bellIcon.addEventListener('click', function(e) {
+                notifDropdown.classList.toggle('show');
+                e.stopPropagation(); 
+            });
+
+            window.addEventListener('click', function(e) {
+                if (!notifDropdown.contains(e.target) && e.target !== bellIcon) {
+                    notifDropdown.classList.remove('show');
+                }
+            });
+        }
+
+        // Script Filter Dropdown
+        const filterBox = document.getElementById('filterBox');
+        const filterDropdown = document.getElementById('filterDropdown');
+        const filterText = document.getElementById('filterText');
+        const filterItems = document.querySelectorAll('.filter-item');
+
+        if (filterBox && filterDropdown) {
+            filterBox.addEventListener('click', function(e) {
+                filterDropdown.classList.toggle('show');
+                e.stopPropagation(); 
+            });
+
+            filterItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    filterText.innerText = this.innerText;
+                    filterDropdown.classList.remove('show');
+                });
+            });
+
+            window.addEventListener('click', function(e) {
+                if (!filterBox.contains(e.target) && !filterDropdown.contains(e.target)) {
+                    filterDropdown.classList.remove('show');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
