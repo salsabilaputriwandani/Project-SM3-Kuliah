@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiQ - Data Pelanggan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            background-color: #EBF3FF;
+            min-height: 100vh;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 280px;
+            background-color: #FFFFFF;
+            padding: 30px 20px;
+            border-right: 3px solid #000;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar::-webkit-scrollbar { display: none; }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .logo img {
+            width: 50px;
+            height: auto;
+        }
+
+        .menu-section { margin-bottom: 20px; }
+
+        .menu-item {
+            padding: 10px 15px;
+            margin-bottom: 5px; 
+            border-radius: 8px;
+            text-decoration: none;
+            color: #000;
+            font-weight: 600;
+            font-size: 15px;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .menu-item:hover { background-color: #D6E8FF; }
+        .menu-item.active {
+            background-color: #60AFFF;
+            color: #000;
+        }
+        .spacer { flex: 1; }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            padding: 30px 50px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        /* TOPBAR & NOTIFIKASI */
+        .topbar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #000;
+            margin-bottom: 25px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .notification-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-icon {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-dropdown {
+            display: none;
+            position: absolute;
+            top: 35px;
+            right: 0;
+            width: 300px;
+            background-color: #FFFFFF;
+            border: 1px solid #000;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .notification-dropdown.show { display: block; }
+
+        .notif-header {
+            background-color: #60AFFF;
+            color: #000;
+            padding: 12px 15px;
+            font-weight: 700;
+            font-size: 14px;
+            border-bottom: 1px solid #000;
+        }
+
+        .notif-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            font-size: 13px;
+            color: #333;
+            cursor: pointer;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .notif-item:hover { background-color: #EBF3FF; }
+        .notif-item:last-child { border-bottom: none; }
+        
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* --- PAGE HEADER --- */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .btn-add {
+            background-color: #1E50A2;
+            color: #FFFFFF;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid #000;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+
+        .btn-add:hover { background-color: #163B78; }
+
+        /* --- SEARCH BOX --- */
+        .search-container { margin-bottom: 20px; }
+
+        .search-container input {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: 1px solid #000;
+            background-color: #80AAFF;
+            font-size: 14px;
+            font-weight: 500;
+            color: #000;
+            outline: none;
+        }
+
+        .search-container input::placeholder { color: #1A1A1A; }
+
+        /* --- DATA TABLE --- */
+        .table-card {
+            background-color: #FFFFFF;
+            border: 1px solid #000;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th, 
+        .data-table td {
+            border: 1px solid #000;
+            padding: 16px 15px;
+            text-align: center;
+            font-size: 14px;
+            color: #000;
+        }
+
+        .data-table th {
+            background-color: #D6E8FF;
+            font-weight: 700;
+        }
+
+        .data-table td { font-weight: 500; }
+
+        .data-table tr:nth-child(even) td { background-color: #F2F2F2; }
+
+        /* --- PAGINATION --- */
+        .pagination-container {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .page-btn {
+            min-width: 38px;
+            height: 38px;
+            padding: 0 10px;
+            background-color: #FFFFFF;
+            border: 1px solid #000;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: #000;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .page-btn.active { background-color: #B3D9FF; }
+        .page-btn:hover:not(.active) { background-color: #EBF3FF; }
+
+        /* --- MODAL POP-UP --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.show { display: flex; }
+
+        .modal-card {
+            background-color: #FFFFFF;
+            border: 2px solid #000;
+            border-radius: 12px;
+            width: 450px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #000;
+            padding-bottom: 10px;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .close-modal {
+            font-size: 24px;
+            font-weight: 700;
+            cursor: pointer;
+            color: #000;
+            background: none;
+            border: none;
+        }
+
+        .form-group { margin-bottom: 15px; }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #000;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-cancel {
+            background-color: #E0E0E0;
+            color: #000;
+            padding: 8px 16px;
+            border: 1px solid #000;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-save {
+            background-color: #1E50A2;
+            color: #FFF;
+            padding: 8px 16px;
+            border: 1px solid #000;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR DENGAN LINK AKTIF PADA TIAP HALAMAN -->
+    <div class="sidebar">
+        <div class="logo">
+            <img src="logo.png" alt="Logo">
+            <span>ServiQ</span>
+        </div>
+        
+        <div class="menu-section">
+            <a href="dashboard_admin.html" class="menu-item">Dashboard</a>
+            <a href="omnichannel_inbox.html" class="menu-item">Omnichannel Inbox</a>
+            <a href="data_pelanggan.html" class="menu-item active">Data Pelanggan</a>
+            <a href="tiket_servis.html" class="menu-item">Tiket Servis</a>
+            <a href="chatbot.html" class="menu-item">Chatbot</a>
+            <a href="data_teknisi.html" class="menu-item">Data Teknisi</a>
+            <a href="daftar_suku_cadang.html" class="menu-item">Daftar Suku Cadang</a>
+            <a href="laporan.html" class="menu-item">Laporan</a>
+        </div>
+
+        <div class="spacer"></div>
+
+        <div class="menu-section" style="margin-bottom: 0;">
+            <a href="profil_admin.html" class="menu-item">Profil</a>
+            <a href="informasi.html" class="menu-item">Informasi</a>
+            <a href="login.html" class="menu-item">Keluar</a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <!-- TOPBAR -->
+        <div class="topbar">
+            <div class="user-info">
+                <div class="notification-wrapper">
+                    <div class="notification-icon" id="bellIcon" title="Pemberitahuan">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    </div>
+                    <div class="notification-dropdown" id="notifDropdown">
+                        <div class="notif-header">Notifikasi Baru</div>
+                        <div class="notif-item"><strong>Sistem:</strong> Laporan mingguan siap diunduh.</div>
+                        <div class="notif-item"><strong>Tiket #1027:</strong> Pelanggan mengirimkan pesan baru.</div>
+                    </div>
+                </div>
+                
+                <div class="profile-info">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Admin
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <h1>Data Pelanggan</h1>
+            <button class="btn-add" id="openModalBtn">+ Tambah Pelanggan</button>
+        </div>
+
+        <!-- SEARCH BAR -->
+        <div class="search-container">
+            <input type="text" id="searchCustomer" placeholder="Cari nama atau email...">
+        </div>
+
+        <!-- TABEL DATA PELANGGAN -->
+        <div class="table-card">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nama</th>
+                        <th>No. Telepon</th>
+                        <th>Email</th>
+                        <th>Jumlah Tiket</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="customerTableBody">
+                    <tr>
+                        <td>CUS001</td>
+                        <td>Andi Pratama</td>
+                        <td>082123251654</td>
+                        <td>andi@gmail.com</td>
+                        <td>3</td>
+                        <td>Aktif</td>
+                    </tr>
+                    <tr>
+                        <td>CUS002</td>
+                        <td>Siti Aisyah</td>
+                        <td>082487563424</td>
+                        <td>siti@gmail.com</td>
+                        <td>2</td>
+                        <td>Aktif</td>
+                    </tr>
+                    <tr>
+                        <td>CUS003</td>
+                        <td>Budi Santoso</td>
+                        <td>087623451287</td>
+                        <td>budi@gmail.com</td>
+                        <td>4</td>
+                        <td>Aktif</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PAGINATION -->
+        <div class="pagination-container">
+            <a href="#" class="page-btn">&lt;</a>
+            <a href="#" class="page-btn active">1</a>
+            <a href="#" class="page-btn">2</a>
+            <a href="#" class="page-btn">&gt;</a>
+        </div>
+
+    </div>
+
+    <!-- MODAL POP-UP DENGAN FIELD INPUT ID PELANGGAN -->
+    <div class="modal-overlay" id="customerModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>Tambah Pelanggan Baru</h2>
+                <button class="close-modal" id="closeModalBtn">&times;</button>
+            </div>
+            <form id="addCustomerForm">
+                <div class="form-group">
+                    <label>ID Pelanggan</label>
+                    <input type="text" id="custId" placeholder="CUS004" required>
+                </div>
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" id="custName" placeholder="Masukkan nama..." required>
+                </div>
+                <div class="form-group">
+                    <label>No. Telepon</label>
+                    <input type="tel" id="custPhone" placeholder="08xxxxxxxxxx" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="custEmail" placeholder="contoh@gmail.com" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" id="cancelModalBtn">Batal</button>
+                    <button type="submit" class="btn-save">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT FUNCTIONAL -->
+    <script>
+        // 1. Dropdown Lonceng Notifikasi
+        const bellIcon = document.getElementById('bellIcon');
+        const notifDropdown = document.getElementById('notifDropdown');
+
+        if (bellIcon && notifDropdown) {
+            bellIcon.addEventListener('click', function(e) {
+                notifDropdown.classList.toggle('show');
+                e.stopPropagation(); 
+            });
+
+            window.addEventListener('click', function(e) {
+                if (!notifDropdown.contains(e.target) && e.target !== bellIcon) {
+                    notifDropdown.classList.remove('show');
+                }
+            });
+        }
+
+        // 2. Fitur Live Search
+        const searchInput = document.getElementById('searchCustomer');
+        const tableBody = document.getElementById('customerTableBody');
+
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function() {
+                const keyword = this.value.toLowerCase();
+                const rows = tableBody.querySelectorAll('tr');
+
+                rows.forEach(row => {
+                    const name = row.children[1].textContent.toLowerCase();
+                    const email = row.children[3].textContent.toLowerCase();
+
+                    if (name.includes(keyword) || email.includes(keyword)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // 3. Modal Pop-up Buka, Tutup & Tambah Data
+        const modal = document.getElementById('customerModal');
+        const openModalBtn = document.getElementById('openModalBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const cancelModalBtn = document.getElementById('cancelModalBtn');
+        const addCustomerForm = document.getElementById('addCustomerForm');
+
+        function openModal() { modal.classList.add('show'); }
+        function closeModal() { modal.classList.remove('show'); addCustomerForm.reset(); }
+
+        openModalBtn.addEventListener('click', openModal);
+        closeModalBtn.addEventListener('click', closeModal);
+        cancelModalBtn.addEventListener('click', closeModal);
+
+        addCustomerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const id = document.getElementById('custId').value;
+            const name = document.getElementById('custName').value;
+            const phone = document.getElementById('custPhone').value;
+            const email = document.getElementById('custEmail').value;
+
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${id}</td>
+                <td>${name}</td>
+                <td>${phone}</td>
+                <td>${email}</td>
+                <td>0</td>
+                <td>Aktif</td>
+            `;
+
+            tableBody.appendChild(newRow);
+            closeModal();
+        });
+    </script>
+</body>
+</html>

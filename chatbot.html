@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiQ - Chatbot AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            background-color: #D6E8FF;
+            min-height: 100vh;
+            color: #000;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 260px;
+            background-color: #FFFFFF;
+            border-right: 3px solid #000;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar::-webkit-scrollbar { display: none; }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 25px 20px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #000;
+        }
+        
+        .logo img {
+            width: 45px;
+            height: auto;
+        }
+
+        .menu-section { padding: 10px 15px; flex: 1; }
+
+        .menu-item {
+            display: block;
+            padding: 12px 15px;
+            margin-bottom: 5px; 
+            border-radius: 8px;
+            text-decoration: none;
+            color: #000;
+            font-weight: 600;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+
+        .menu-item:hover { background-color: #EBF3FF; }
+        
+        .menu-item.active {
+            background-color: #60AFFF; 
+            color: #000;
+            font-weight: 700;
+        }
+
+        .sidebar-bottom { padding: 10px 15px; border-top: 1px solid #ddd; }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        /* TOPBAR & NOTIFIKASI */
+        .topbar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 15px 40px;
+            background-color: #FFFFFF;
+            border-bottom: 2px solid #000;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .notification-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-icon {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-dropdown {
+            display: none;
+            position: absolute;
+            top: 35px;
+            right: 0;
+            width: 300px;
+            background-color: #FFFFFF;
+            border: 1px solid #000;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .notification-dropdown.show { display: block; }
+
+        .notif-header {
+            background-color: #60AFFF;
+            color: #000;
+            padding: 12px 15px;
+            font-weight: 700;
+            font-size: 14px;
+            border-bottom: 1px solid #000;
+        }
+
+        .notif-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            font-size: 13px;
+            color: #333;
+            cursor: pointer;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .notif-item:hover { background-color: #EBF3FF; }
+        .notif-item:last-child { border-bottom: none; }
+        
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* CONTENT BODY */
+        .content-body { padding: 30px 40px; }
+
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 5px;
+        }
+
+        .page-header p {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* GRID LAYOUT CHATBOT */
+        .chatbot-container {
+            display: grid;
+            grid-template-columns: 1.4fr 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        /* PANEL KIRI: SIMULASI CHATBOT */
+        .chat-sim-card {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chat-header-bar {
+            background-color: #9EC5FF;
+            border: 1px solid #000;
+            border-radius: 8px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .customer-avatar {
+            width: 42px;
+            height: 42px;
+            background-color: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFF;
+            flex-shrink: 0;
+        }
+
+        .customer-avatar svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .customer-details h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .customer-details p {
+            font-size: 12px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* WINDOW OBROLAN */
+        .chat-window-box {
+            background-color: #FFFFFF;
+            border: 1px solid #000;
+            border-radius: 8px;
+            height: 380px;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .chat-window-box::-webkit-scrollbar { width: 6px; }
+        .chat-window-box::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+
+        .msg-group {
+            display: flex;
+            flex-direction: column;
+            max-width: 70%;
+        }
+
+        .msg-group.left {
+            align-self: flex-start;
+        }
+
+        .msg-group.right {
+            align-self: flex-end;
+        }
+
+        .msg-bubble {
+            padding: 12px 16px;
+            font-size: 13px;
+            line-height: 1.4;
+            color: #000;
+            border-radius: 6px;
+        }
+
+        .msg-group.left .msg-bubble {
+            background-color: #E2EEFF;
+        }
+
+        .msg-group.right .msg-bubble {
+            background-color: #B2D3FF;
+        }
+
+        .msg-time {
+            font-size: 11px;
+            font-weight: 700;
+            color: #000;
+            margin-top: 4px;
+        }
+
+        .msg-group.left .msg-time { text-align: left; }
+        .msg-group.right .msg-time { text-align: right; }
+
+        /* INPUT BAR */
+        .chat-input-bar {
+            background-color: #80B5FF;
+            border: 1px solid #000;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            padding: 6px 12px;
+            gap: 10px;
+        }
+
+        .chat-input-bar input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            font-weight: 500;
+            color: #000;
+            padding: 8px;
+        }
+
+        .chat-input-bar input::placeholder {
+            color: #222;
+        }
+
+        .clip-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+        }
+
+        #file-upload { display: none; }
+
+        .send-btn {
+            background-color: #D6E8FF;
+            border: 1px solid #000;
+            border-radius: 6px;
+            width: 42px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+            flex-shrink: 0;
+        }
+
+        .send-btn:hover {
+            background-color: #60AFFF;
+        }
+
+        /* PANEL KANAN: PENGATURAN CHATBOT */
+        .config-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .config-card {
+            background-color: #F4F8FC;
+            border: 1px solid #000;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .config-card h2 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 15px;
+        }
+
+        /* TOGGLE STATUS */
+        .status-toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .status-pill {
+            background-color: #82E696;
+            border: 1px solid #000;
+            border-radius: 6px;
+            padding: 8px 25px;
+            font-weight: 700;
+            font-size: 14px;
+            color: #000;
+            transition: 0.3s;
+        }
+
+        .status-pill.off {
+            background-color: #CCCCCC;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 28px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #000;
+            transition: .3s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        /* FORM INFORMASI CHATBOT */
+        .form-group-bot {
+            margin-bottom: 15px;
+        }
+
+        .form-group-bot label {
+            display: block;
+            font-size: 15px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 8px;
+        }
+
+        .form-group-bot input,
+        .form-group-bot textarea {
+            width: 100%;
+            background-color: #C0C8D0;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #000;
+            outline: none;
+        }
+
+        .form-group-bot textarea {
+            height: 120px;
+            resize: none;
+            line-height: 1.5;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">
+            <img src="logo.png" alt="Logo">
+            <span>ServiQ</span>
+        </div>
+        
+        <div class="menu-section">
+            <a href="dashboard_admin.html" class="menu-item">Dashboard</a>
+            <a href="omnichannel_inbox.html" class="menu-item">Omnichannel Inbox</a>
+            <a href="data_pelanggan.html" class="menu-item">Data Pelanggan</a>
+            <a href="tiket_servis.html" class="menu-item">Tiket Servis</a>
+            <a href="chatbot.html" class="menu-item active">Chatbot</a>
+            <a href="data_teknisi.html" class="menu-item">Data Teknisi</a>
+            <a href="daftar_suku_cadang.html" class="menu-item">Daftar Suku Cadang</a>
+            <a href="laporan.html" class="menu-item">Laporan</a>
+        </div>
+
+        <div class="sidebar-bottom">
+            <a href="profil_admin.html" class="menu-item">Profil</a>
+            <a href="informasi.html" class="menu-item">Informasi</a>
+            <a href="login.html" class="menu-item">Keluar</a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <!-- TOPBAR -->
+        <div class="topbar">
+            <div class="user-info">
+                <div class="notification-wrapper">
+                    <div class="notification-icon" id="bellIcon" title="Pemberitahuan">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    </div>
+                    <div class="notification-dropdown" id="notifDropdown">
+                        <div class="notif-header">Notifikasi Baru</div>
+                        <div class="notif-item"><strong>Chatbot:</strong> 15 pesan dijawab otomatis hari ini.</div>
+                        <div class="notif-item"><strong>Sistem:</strong> Respon AI beroperasi normal.</div>
+                    </div>
+                </div>
+                
+                <div class="profile-info">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Admin
+                </div>
+            </div>
+        </div>
+
+        <div class="content-body">
+            
+            <!-- PAGE HEADER -->
+            <div class="page-header">
+                <h1>Chatbot AI ServiQ</h1>
+                <p>Kelola asisten otomatis untuk membantu menjawab pertanyaan pelanggan.</p>
+            </div>
+
+            <!-- CHATBOT MAIN GRID -->
+            <div class="chatbot-container">
+                
+                <!-- KIRI: SIMULASI LIVE CHATBOT -->
+                <div class="chat-sim-card">
+                    
+                    <div class="chat-header-bar">
+                        <div class="customer-avatar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        </div>
+                        <div class="customer-details">
+                            <h3>Nama Customer</h3>
+                            <p>Online</p>
+                        </div>
+                    </div>
+
+                    <!-- WINDOW OBROLAN -->
+                    <div class="chat-window-box" id="chatWindow">
+                        <div class="msg-group left">
+                            <div class="msg-bubble">Laptop saya mati total.</div>
+                            <div class="msg-time">10.30</div>
+                        </div>
+
+                        <div class="msg-group right">
+                            <div class="msg-bubble">Apakah lampu indikator menyala ketika charger dipasang?</div>
+                            <div class="msg-time">10.35</div>
+                        </div>
+
+                        <div class="msg-group left">
+                            <div class="msg-bubble">Tidak.</div>
+                            <div class="msg-time">10.40</div>
+                        </div>
+
+                        <div class="msg-group right">
+                            <div class="msg-bubble">Kemungkinan ada masalah pada sistem daya. Silahkan bawa perangkat ke service center untuk pemeriksaan lebih lanjut.</div>
+                            <div class="msg-time">10.45</div>
+                        </div>
+                    </div>
+
+                    <!-- INPUT CHAT -->
+                    <div class="chat-input-bar">
+                        <input type="text" id="chatInput" placeholder="Tulis pesan....">
+                        
+                        <label for="file-upload" class="clip-btn" title="Lampirkan File">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                        </label>
+                        <input type="file" id="file-upload">
+
+                        <button class="send-btn" id="btnSend">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- KANAN: PENGATURAN CHATBOT -->
+                <div class="config-column">
+                    
+                    <!-- KARTU STATUS CHATBOT -->
+                    <div class="config-card">
+                        <h2>Status Chatbot</h2>
+                        <div class="status-toggle-row">
+                            <div class="status-pill" id="statusPill">• AKTIF</div>
+                            <label class="switch">
+                                <input type="checkbox" id="botToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- KARTU INFORMASI CHATBOT -->
+                    <div class="config-card">
+                        <h2>Informasi Chatbot</h2>
+                        
+                        <div class="form-group-bot">
+                            <label>Nama Chatbot</label>
+                            <input type="text" id="botName" value="ServiQ Assistant">
+                        </div>
+
+                        <div class="form-group-bot">
+                            <label>Deskripsi/Intruksi</label>
+                            <textarea id="botDesc">Halo! Saya asisten virtual ServiQ. Saya siap membantu pelanggan mengenai layanan servis, estimasi biaya, status perbaikan, dan informasi lainnya.</textarea>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SCRIPT FUNCTIONAL -->
+    <script>
+        // 1. Dropdown Lonceng Notifikasi
+        const bellIcon = document.getElementById('bellIcon');
+        const notifDropdown = document.getElementById('notifDropdown');
+
+        if (bellIcon && notifDropdown) {
+            bellIcon.addEventListener('click', function(e) {
+                notifDropdown.classList.toggle('show');
+                e.stopPropagation(); 
+            });
+
+            window.addEventListener('click', function(e) {
+                if (!notifDropdown.contains(e.target) && e.target !== bellIcon) {
+                    notifDropdown.classList.remove('show');
+                }
+            });
+        }
+
+        // 2. Toggle Status Chatbot (On / Off)
+        const botToggle = document.getElementById('botToggle');
+        const statusPill = document.getElementById('statusPill');
+
+        botToggle.addEventListener('change', function() {
+            if (this.checked) {
+                statusPill.textContent = '• AKTIF';
+                statusPill.classList.remove('off');
+                statusPill.style.backgroundColor = '#82E696';
+            } else {
+                statusPill.textContent = '• NONAKTIF';
+                statusPill.classList.add('off');
+                statusPill.style.backgroundColor = '#CCCCCC';
+            }
+        });
+
+        // 3. Simulasi Tes Pertanyaan Customer & Jawaban Otomatis Chatbot
+        const chatInput = document.getElementById('chatInput');
+        const btnSend = document.getElementById('btnSend');
+        const chatWindow = document.getElementById('chatWindow');
+
+        function sendMessage() {
+            const text = chatInput.value.trim();
+            if (text !== '') {
+                const now = new Date();
+                const timeStr = now.getHours().toString().padStart(2, '0') + "." + now.getMinutes().toString().padStart(2, '0');
+
+                // A. Pesan dari Customer (Kiri)
+                const customerMsg = document.createElement('div');
+                customerMsg.className = 'msg-group left';
+                customerMsg.innerHTML = `
+                    <div class="msg-bubble">${text}</div>
+                    <div class="msg-time">${timeStr}</div>
+                `;
+
+                chatWindow.appendChild(customerMsg);
+                chatInput.value = '';
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+
+                // B. Balasan Otomatis dari Chatbot AI (Kanan) jika status AKTIF
+                if (botToggle.checked) {
+                    setTimeout(() => {
+                        const botReply = document.createElement('div');
+                        botReply.className = 'msg-group right';
+                        botReply.innerHTML = `
+                            <div class="msg-bubble">Halo! Ini adalah jawaban otomatis dari ServiQ Assistant mengenai pertanyaan Anda: "${text}".</div>
+                            <div class="msg-time">${timeStr}</div>
+                        `;
+                        chatWindow.appendChild(botReply);
+                        chatWindow.scrollTop = chatWindow.scrollHeight;
+                    }, 800);
+                }
+            }
+        }
+
+        btnSend.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

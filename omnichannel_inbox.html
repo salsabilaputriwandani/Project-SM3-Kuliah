@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiQ - Omnichannel Inbox</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            background-color: #EBF3FF;
+            min-height: 100vh;
+            overflow: hidden; 
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 280px;
+            background-color: #FFFFFF;
+            padding: 30px 20px;
+            border-right: 3px solid #000;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar::-webkit-scrollbar { display: none; }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .logo img {
+            width: 50px;
+            height: auto;
+        }
+
+        .menu-section { margin-bottom: 20px; }
+
+        .menu-item {
+            padding: 10px 15px;
+            margin-bottom: 5px; 
+            border-radius: 8px;
+            text-decoration: none;
+            color: #000;
+            font-weight: 600;
+            font-size: 15px;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .menu-item:hover { background-color: #D6E8FF; }
+        .menu-item.active {
+            background-color: #60AFFF;
+            color: #000;
+        }
+        .spacer { flex: 1; }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            padding: 30px 50px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* TOPBAR & NOTIFIKASI */
+        .topbar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #000;
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .notification-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-icon {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-dropdown {
+            display: none;
+            position: absolute;
+            top: 35px;
+            right: 0;
+            width: 300px;
+            background-color: #FFFFFF;
+            border: 1px solid #000;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .notification-dropdown.show { display: block; }
+
+        .notif-header {
+            background-color: #60AFFF;
+            color: #000;
+            padding: 12px 15px;
+            font-weight: 700;
+            font-size: 14px;
+            border-bottom: 1px solid #000;
+        }
+
+        .notif-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            font-size: 13px;
+            color: #333;
+            cursor: pointer;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .notif-item:hover { background-color: #EBF3FF; }
+        .notif-item:last-child { border-bottom: none; }
+        
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* --- OMNICHANNEL WRAPPER --- */
+        .omni-container {
+            display: flex;
+            background-color: #FFFFFF;
+            border: 2px solid #000;
+            border-radius: 12px;
+            flex: 1;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        /* --- CHAT LIST (KIRI) --- */
+        .chat-list-panel {
+            width: 350px;
+            border-right: 2px solid #000;
+            display: flex;
+            flex-direction: column;
+            background-color: #FAFAFA;
+        }
+
+        /* Pencarian Aktif */
+        .search-box {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #000;
+            border-radius: 20px;
+            font-size: 13px;
+            outline: none;
+            background-color: #fff;
+        }
+
+        /* Filter Platform Scrollable */
+        .platform-filters {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            padding: 15px;
+            border-bottom: 2px solid #000;
+            background-color: #fff;
+            white-space: nowrap; 
+        }
+        
+        .platform-filters::-webkit-scrollbar { height: 6px; }
+        .platform-filters::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        .platform-filters::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+
+        .filter-btn {
+            padding: 6px 15px;
+            border: 1px solid #000;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            background-color: #fff;
+            color: #000;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+        }
+        .filter-btn.active {
+            background-color: #60AFFF;
+            border-color: #000;
+        }
+
+        /* List Pesan Masuk */
+        .chat-items {
+            flex: 1;
+            overflow-y: auto;
+        }
+        .chat-items::-webkit-scrollbar { width: 6px; }
+        .chat-items::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+
+        .chat-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+            transition: 0.2s;
+            align-items: center;
+        }
+        .chat-item:hover { background-color: #EBF3FF; }
+        .chat-item.active { background-color: #D6E8FF; border-left: 4px solid #60AFFF; }
+
+        
+        /* CSS Khusus Logo Sosmed Rapi & Presisi (Tanpa Double Border) */
+        .avatar-container {
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .avatar-container img.platform-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            display: block;
+        }
+
+        .avatar-container img.platform-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Menutupi area lingkaran secara sempurna */
+            border-radius: 50%;
+            display: block;
+        
+        }
+
+        .chat-details {
+            flex: 1;
+            overflow: hidden;
+        }
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        .chat-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #000;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .chat-time {
+            font-size: 11px;
+            color: #666;
+            font-weight: 500;
+        }
+        .chat-preview {
+            font-size: 12px;
+            color: #555;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* --- ACTIVE CHAT PANEL (KANAN) --- */
+        .chat-window {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #FFFFFF;
+        }
+
+        /* Header Kanan */
+        .chat-window-header {
+            display: flex;
+            align-items: center;
+            padding: 15px 25px;
+            border-bottom: 2px solid #000;
+            background-color: #FAFAFA;
+        }
+        .active-user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        /* Area Pesan */
+        .message-area {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .message-area::-webkit-scrollbar { width: 6px; }
+        .message-area::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+
+        .msg-bubble {
+            max-width: 65%;
+            padding: 12px 18px;
+            font-size: 13px;
+            line-height: 1.5;
+            border: 1px solid #000;
+        }
+        .msg-left {
+            align-self: flex-start;
+            background-color: #F5F5F5;
+            border-radius: 0px 15px 15px 15px;
+        }
+        .msg-right {
+            align-self: flex-end;
+            background-color: #D6E8FF;
+            border-radius: 15px 0px 15px 15px;
+        }
+        .msg-time {
+            font-size: 10px;
+            color: #666;
+            margin-top: 5px;
+            text-align: right;
+            display: block;
+        }
+
+        /* Input Chat Bawah */
+        .chat-input-area {
+            padding: 20px;
+            border-top: 2px solid #000;
+            background-color: #FAFAFA;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background-color: #fff;
+            border: 1px solid #000;
+            border-radius: 25px;
+            padding: 5px 15px;
+        }
+
+        .input-wrapper input[type="text"] {
+            flex: 1;
+            padding: 8px 5px;
+            border: none;
+            font-size: 14px;
+            outline: none;
+            background: transparent;
+        }
+
+        .clip-icon {
+            cursor: pointer;
+            color: #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            transition: 0.2s;
+        }
+        .clip-icon:hover { color: #000; }
+        
+        #file-upload { display: none; }
+
+        .send-btn {
+            background-color: #60AFFF;
+            border: 1px solid #000;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+            flex-shrink: 0;
+        }
+        .send-btn:hover { background-color: #3B82F6; }
+        .send-btn svg {
+            color: #000;
+            transform: translateX(-2px) translateY(2px); 
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">
+            <img src="logo.png" alt="Logo">
+            <span>ServiQ</span>
+        </div>
+        
+        <div class="menu-section">
+            <a href="dashboard_admin.html" class="menu-item">Dashboard</a>
+            <a href="omnichannel_inbox.html" class="menu-item active">Omnichannel Inbox</a>
+            <a href="data_pelanggan.html" class="menu-item">Data Pelanggan</a>
+            <a href="tiket_servis.html" class="menu-item">Tiket Servis</a>
+            <a href="chatbot.html" class="menu-item">Chatbot</a>
+            <a href="data_teknisi.html" class="menu-item">Data Teknisi</a>
+            <a href="daftar_suku_cadang.html" class="menu-item">Daftar Suku Cadang</a>
+            <a href="laporan.html" class="menu-item">Laporan</a>
+        </div>
+
+        <div class="spacer"></div>
+
+        <div class="menu-section" style="margin-bottom: 0;">
+            <a href="profil_admin.html" class="menu-item">Profil</a>
+            <a href="informasi.html" class="menu-item">Informasi</a>
+            <a href="login.html" class="menu-item">Keluar</a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <!-- TOPBAR -->
+        <div class="topbar">
+            <div class="user-info">
+                <div class="notification-wrapper">
+                    <div class="notification-icon" id="bellIcon" title="Pemberitahuan">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    </div>
+                    <div class="notification-dropdown" id="notifDropdown">
+                        <div class="notif-header">Notifikasi Baru</div>
+                        <div class="notif-item"><strong>Sistem:</strong> Laporan siap diunduh.</div>
+                        <div class="notif-item"><strong>Tiket #1027:</strong> Pelanggan mengirimkan pesan baru.</div>
+                    </div>
+                </div>
+                
+                <div class="profile-info">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Admin
+                </div>
+            </div>
+        </div>
+
+        <!-- OMNICHANNEL INTERFACE -->
+        <div class="omni-container">
+            
+            <!-- PANEL KIRI (Daftar Chat) -->
+            <div class="chat-list-panel">
+                
+                <div class="search-box">
+                    <input type="text" id="searchChat" placeholder="Cari percakapan...">
+                </div>
+
+                <div class="platform-filters">
+                    <button class="filter-btn active" data-filter="semua">Semua</button>
+                    <button class="filter-btn" data-filter="whatsapp">WhatsApp (16)</button>
+                    <button class="filter-btn" data-filter="instagram">Instagram (13)</button>
+                    <button class="filter-btn" data-filter="tiktok">TikTok (5)</button>
+                    <button class="filter-btn" data-filter="telegram">Telegram (2)</button>
+                    <button class="filter-btn" data-filter="facebook">Facebook (8)</button>
+                </div>
+
+                <div class="chat-items" id="chatList">
+                    
+                    <!-- Chat 1: WhatsApp -->
+                    <div class="chat-item active" data-id="chat1" data-name="Budi Santoso" data-platform="whatsapp">
+                        <div class="avatar-container">
+                            <img src="whatsapp.png" alt="WhatsApp" class="platform-logo">
+                        </div>
+                        <div class="chat-details">
+                            <div class="chat-header">
+                                <span class="chat-name">Budi Santoso</span>
+                                <span class="chat-time">10:45</span>
+                            </div>
+                            <div class="chat-preview">Min, estimasi ganti Keyboard MacBook berapa lama?</div>
+                        </div>
+                    </div>
+
+                    <!-- Chat 2: Instagram -->
+                    <div class="chat-item" data-id="chat2" data-name="Siti Aminah" data-platform="instagram">
+                        <div class="avatar-container">
+                            <img src="instagram.png" alt="Instagram" class="platform-logo">
+                        </div>
+                        <div class="chat-details">
+                            <div class="chat-header">
+                                <span class="chat-name">Siti Aminah</span>
+                                <span class="chat-time">09:30</span>
+                            </div>
+                            <div class="chat-preview">Kak, bisa servis keyboard MacBook Air M1?</div>
+                        </div>
+                    </div>
+
+                    <!-- Chat 3: TikTok -->
+                    <div class="chat-item" data-id="chat3" data-name="Doni Setiawan" data-platform="tiktok">
+                        <div class="avatar-container">
+                            <img src="tiktok.png" alt="TikTok" class="platform-logo">
+                        </div>
+                        <div class="chat-details">
+                            <div class="chat-header">
+                                <span class="chat-name">Doni Setiawan</span>
+                                <span class="chat-time">Kemarin</span>
+                            </div>
+                            <div class="chat-preview">LCD Samsung S22 Ultra saya pecah, ready stock min?</div>
+                        </div>
+                    </div>
+
+                    <!-- Chat 4: Facebook -->
+                    <div class="chat-item" data-id="chat4" data-name="Rina Melati" data-platform="facebook">
+                        <div class="avatar-container">
+                            <img src="facebook.png" alt="Facebook" class="platform-logo">
+                        </div>
+                        <div class="chat-details">
+                            <div class="chat-header">
+                                <span class="chat-name">Rina Melati</span>
+                                <span class="chat-time">Kemarin</span>
+                            </div>
+                            <div class="chat-preview">Laptop Asus ROG saya sering overheat.</div>
+                        </div>
+                    </div>
+
+                     <!-- Chat 5: Telegram -->
+                     <div class="chat-item" data-id="chat5" data-name="Anton W" data-platform="telegram">
+                        <div class="avatar-container">
+                            <img src="telegram.png" alt="Telegram" class="platform-logo">
+                        </div>
+                        <div class="chat-details">
+                            <div class="chat-header">
+                                <span class="chat-name">Anton W</span>
+                                <span class="chat-time">Senin</span>
+                            </div>
+                            <div class="chat-preview">Min, mau tanya status servis HP Poco saya dong.</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- PANEL KANAN (Obrolan Aktif) -->
+            <div class="chat-window">
+                
+                <!-- Header Dinamis -->
+                <div class="chat-window-header">
+                    <div class="active-user-info">
+                        <div class="avatar-container">
+                            <img src="whatsapp.png" alt="Platform" class="platform-logo" id="header-platform-logo">
+                        </div>
+                        <div class="active-user-text">
+                            <h3 id="header-chat-name">Budi Santoso</h3>
+                            <p id="header-chat-platform">Online - via WhatsApp</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bubble Chat -->
+                <div class="message-area" id="chatMessageArea">
+                    <div class="msg-bubble msg-left">
+                        Halo min, saya mau tanya soal tiket servis #1027.
+                        <span class="msg-time">10:40</span>
+                    </div>
+                    <div class="msg-bubble msg-right">
+                        Halo Bapak Budi! Tentu, ada yang bisa kami bantu mengenai tiket servis tersebut?
+                        <span class="msg-time">10:42</span>
+                    </div>
+                    <div class="msg-bubble msg-left">
+                        Min, estimasi ganti Keyboard Laptop ASUS berapa lama ya?
+                        <span class="msg-time">10:45</span>
+                    </div>
+                </div>
+
+                <!-- Input Chat Bawah -->
+                <div class="chat-input-area">
+                    <div class="input-wrapper">
+                        <input type="text" id="chatInputBox" placeholder="Ketik pesan Anda di sini...">
+                        <label for="file-upload" class="clip-icon" title="Lampirkan File">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                        </label>
+                        <input type="file" id="file-upload" accept="image/*,video/*">
+                    </div>
+                    
+                    <button class="send-btn" id="btnSendChat" title="Kirim Pesan">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- SCRIPT -->
+    <script>
+        const chatDatabase = {
+            chat1: [
+                { sender: 'left', text: 'Halo min, saya mau tanya soal tiket servis #1027.', time: '10:40' },
+                { sender: 'right', text: 'Halo Bapak Budi! Tentu, ada yang bisa kami bantu mengenai tiket servis tersebut?', time: '10:42' },
+                { sender: 'left', text: 'Min, estimasi ganti Keyboard MacBook berapa lama ya?', time: '10:45' }
+            ],
+            chat2: [
+                { sender: 'left', text: 'Permisi kak, mau konsultasi kerusakan MacBook.', time: '09:25' },
+                { sender: 'right', text: 'Halo Kak Siti, silakan jelaskan kendala MacBook-nya ya.', time: '09:28' },
+                { sender: 'left', text: 'Kak, bisa servis keyboard MacBook Air M1?', time: '09:30' }
+            ],
+            chat3: [
+                { sender: 'left', text: 'Siang min, HP saya jatuh tadi pagi.', time: 'Kemarin' },
+                { sender: 'left', text: 'RAM 8 GB Laptop ACER, ready stock min?', time: 'Kemarin' },
+                { sender: 'right', text: 'Halo Kak Doni, untuk RAM 8 GB Laptop ACER ready stock kak. Silakan bawa unit ke service center ya!', time: 'Kemarin' }
+            ],
+            chat4: [
+                { sender: 'left', text: 'Halo admin ServiQ, laptop saya kipasnya berisik banget.', time: 'Kemarin' },
+                { sender: 'left', text: 'Laptop Asus ROG saya sering overheat.', time: 'Kemarin' },
+                { sender: 'right', text: 'Halo Kak Rina, kemungkinan pasta thermalnya perlu di-repaste dan pembersihan debu internal kak.', time: 'Kemarin' }
+            ],
+            chat5: [
+                { sender: 'left', text: 'Min, mau tanya status servis Laptop ASUS saya dong.', time: 'Senin' },
+                { sender: 'right', text: 'Halo Kak Anton, unit Laptop ASUS Kakak saat ini sudah selesai tahap QC dan siap diambil ya.', time: 'Senin' },
+                { sender: 'left', text: 'Siap, terimakasih admin!', time: 'Senin' }
+            ]
+        };
+
+        // 1. Lonceng Notifikasi
+        const bellIcon = document.getElementById('bellIcon');
+        const notifDropdown = document.getElementById('notifDropdown');
+
+        if (bellIcon && notifDropdown) {
+            bellIcon.addEventListener('click', function(e) {
+                notifDropdown.classList.toggle('show');
+                e.stopPropagation(); 
+            });
+
+            window.addEventListener('click', function(e) {
+                if (!notifDropdown.contains(e.target) && e.target !== bellIcon) {
+                    notifDropdown.classList.remove('show');
+                }
+            });
+        }
+
+        // 2. Filter Tab Platform
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const chatItems = document.querySelectorAll('.chat-item');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const filter = btn.getAttribute('data-filter');
+
+                chatItems.forEach(item => {
+                    const platform = item.getAttribute('data-platform');
+                    if (filter === 'semua' || platform === filter) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // 3. Pencarian Nama Live
+        const searchInput = document.getElementById('searchChat');
+        if (searchInput) {
+            searchInput.addEventListener('keyup', function() {
+                const keyword = this.value.toLowerCase();
+                chatItems.forEach(item => {
+                    const name = item.getAttribute('data-name').toLowerCase();
+                    if (name.includes(keyword)) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // 4. Update Header & Obrolan
+        const headerName = document.getElementById('header-chat-name');
+        const headerPlatform = document.getElementById('header-chat-platform');
+        const headerLogo = document.getElementById('header-platform-logo');
+        const messageArea = document.getElementById('chatMessageArea');
+
+        chatItems.forEach(item => {
+            item.addEventListener('click', () => {
+                chatItems.forEach(c => c.classList.remove('active'));
+                item.classList.add('active');
+
+                const chatId = item.getAttribute('data-id');
+                const name = item.getAttribute('data-name');
+                const platform = item.getAttribute('data-platform');
+                
+                const platformCap = platform.charAt(0).toUpperCase() + platform.slice(1);
+
+                headerName.innerText = name;
+                headerPlatform.innerText = "Online - via " + platformCap;
+                headerLogo.src = platform + ".png";
+
+                messageArea.innerHTML = '';
+                const messages = chatDatabase[chatId] || [];
+                
+                messages.forEach(msg => {
+                    const bubble = document.createElement('div');
+                    bubble.className = `msg-bubble msg-${msg.sender}`;
+                    bubble.innerHTML = `${msg.text}<span class="msg-time">${msg.time}</span>`;
+                    messageArea.appendChild(bubble);
+                });
+
+                messageArea.scrollTop = messageArea.scrollHeight;
+            });
+        });
+
+        // 5. Kirim Pesan
+        const btnSend = document.getElementById('btnSendChat');
+        const inputBox = document.getElementById('chatInputBox');
+
+        function sendMessage() {
+            const text = inputBox.value.trim();
+            if (text !== "") {
+                const now = new Date();
+                const timeStr = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+
+                const newBubble = document.createElement('div');
+                newBubble.className = 'msg-bubble msg-right';
+                newBubble.innerHTML = text + '<span class="msg-time">' + timeStr + '</span>';
+                
+                messageArea.appendChild(newBubble);
+                inputBox.value = "";
+                messageArea.scrollTop = messageArea.scrollHeight;
+            }
+        }
+
+        btnSend.addEventListener('click', sendMessage);
+        inputBox.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+    </script>
+</body>
+</html>

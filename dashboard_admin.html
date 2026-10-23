@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiQ - Dashboard Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            background-color: #EBF3FF;
+            min-height: 100vh;
+            /* Scroll dibiarkan natural di body / full 1 halaman */
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 280px;
+            background-color: #FFFFFF;
+            padding: 30px 20px;
+            border-right: 3px solid #000;
+            display: flex;
+            flex-direction: column;
+            position: sticky; /* Membuat sidebar diam saat halaman di-scroll */
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .logo img {
+            width: 50px;
+            height: auto;
+        }
+
+        .menu-section {
+            margin-bottom: 20px;
+        }
+
+        .menu-item {
+            padding: 10px 15px;
+            margin-bottom: 5px; 
+            border-radius: 8px;
+            text-decoration: none;
+            color: #000;
+            font-weight: 600;
+            font-size: 15px;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .menu-item:hover {
+            background-color: #D6E8FF;
+        }
+
+        .menu-item.active {
+            background-color: #60AFFF;
+            color: #000;
+        }
+
+        .spacer {
+            flex: 1;
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            padding: 30px 50px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* TOPBAR & NOTIFIKASI */
+        .topbar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #000;
+            margin-bottom: 25px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .notification-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-icon {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-dropdown {
+            display: none;
+            position: absolute;
+            top: 35px;
+            right: 0;
+            width: 300px;
+            background-color: #FFFFFF;
+            border: 1px solid #000;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .notification-dropdown.show {
+            display: block;
+        }
+
+        .notif-header {
+            background-color: #60AFFF;
+            color: #000;
+            padding: 12px 15px;
+            font-weight: 700;
+            font-size: 14px;
+            border-bottom: 1px solid #000;
+        }
+
+        .notif-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            font-size: 13px;
+            color: #333;
+            cursor: pointer;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .notif-item:hover {
+            background-color: #EBF3FF;
+        }
+
+        .notif-item:last-child {
+            border-bottom: none;
+        }
+        
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* --- DASHBOARD HEADER --- */
+        .header-title {
+            margin-bottom: 25px;
+        }
+
+        .header-title h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 4px;
+        }
+
+        .header-title p {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* --- DASHBOARD GRID --- */
+        .dashboard-top-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card-box {
+            background-color: #FFFFFF;
+            border: 1px solid #000;
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 20px;
+        }
+
+        /* AREA PIE CHART & LEGEND */
+        .chart-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .pie-chart {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            /* CSS simulasi Pie Chart sesuai warna di figma */
+            background: conic-gradient(
+                #FF6BE5 0% 21%,     /* Tiket Baru */
+                #3B82F6 21% 33%,    /* Menunggu Persetujuan */
+                #1E3A8A 33% 49%,    /* Dalam Perbaikan */
+                #60A5FA 49% 58%,    /* Menunggu Suku Cadang */
+                #93C5FD 58% 72%,    /* QC */
+                #4B5563 72% 100%    /* Selesai */
+            );
+            border: 2px solid #EBF3FF;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .legend-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .legend-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: #000;
+        }
+
+        .legend-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .legend-value {
+            font-weight: 700;
+        }
+
+        /* AREA KEUANGAN */
+        .finance-item {
+            margin-bottom: 25px;
+        }
+
+        .finance-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .finance-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 5px;
+        }
+
+        .finance-title::before {
+            content: "▪";
+            font-size: 18px;
+        }
+
+        .finance-amount {
+            font-size: 16px;
+            font-weight: 600;
+            color: #000;
+            margin-left: 15px;
+            margin-bottom: 8px;
+        }
+
+        .badge-green {
+            background-color: #5EBC8B;
+            color: #000;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            margin-left: 15px;
+        }
+
+        /* AREA TABEL TEKNISI */
+        .table-container {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-container th, 
+        .table-container td {
+            border: 1px solid #000;
+            padding: 12px 15px;
+            text-align: center;
+            font-size: 14px;
+            color: #000;
+        }
+
+        .table-container th {
+            background-color: #D6E8FF;
+            font-weight: 700;
+        }
+
+        .table-container td {
+            font-weight: 500;
+        }
+
+        .table-container tr:nth-child(even) td {
+            background-color: #F5F5F5;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo">
+            <img src="logo.png" alt="Logo">
+            <span>ServiQ</span>
+        </div>
+        
+        <div class="menu-section">
+            <a href="dashboard_admin.html" class="menu-item active">Dashboard</a>
+            <a href="omnichannel_inbox.html" class="menu-item">Omnichannel Inbox</a>
+            <a href="data_pelanggan.html" class="menu-item">Data Pelanggan</a>
+            <a href="tiket_servis.html" class="menu-item">Tiket Servis</a>
+            <a href="chatbot.html" class="menu-item">Chatbot</a>
+            <a href="data_teknisi.html" class="menu-item">Data Teknisi</a>
+            <a href="daftar_suku_cadang.html" class="menu-item">Daftar Suku Cadang</a>
+            <a href="laporan.html" class="menu-item">Laporan</a>
+        </div>
+
+        <div class="spacer"></div>
+
+        <div class="menu-section" style="margin-bottom: 0;">
+            <a href="profil_admin.html" class="menu-item">Profil</a>
+            <a href="informasi.html" class="menu-item">Informasi</a>
+            <a href="login.html" class="menu-item">Keluar</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        
+        <div class="topbar">
+            <div class="user-info">
+                <!-- Fitur Lonceng Dropdown di Topbar (Berfungsi) -->
+                <div class="notification-wrapper">
+                    <div class="notification-icon" id="bellIcon" title="Pemberitahuan">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    </div>
+                    <div class="notification-dropdown" id="notifDropdown">
+                        <div class="notif-header">Notifikasi Baru</div>
+                        <div class="notif-item"><strong>Sistem:</strong> Laporan mingguan siap diunduh.</div>
+                        <div class="notif-item"><strong>Tiket #1027:</strong> Pelanggan mengirimkan pesan baru.</div>
+                    </div>
+                </div>
+                
+                <div class="profile-info">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Admin
+                </div>
+            </div>
+        </div>
+
+        <div class="header-title">
+            <h1>Hallo, Admin</h1>
+            <p>Ringkasan aktivitas service center hari ini.</p>
+        </div>
+
+        <div class="dashboard-top-grid">
+            <!-- Box Status Tiket (Kiri) -->
+            <div class="card-box">
+                <div class="card-title">Status Tiket</div>
+                
+                <div class="chart-container">
+                    <div class="pie-chart"></div>
+                    
+                    <div class="legend-container">
+                        <div class="legend-item">
+                            <div class="legend-label"><div class="dot" style="background-color: #FF6BE5;"></div> Tiket Baru</div>
+                            <div class="legend-value">12</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-label"><div class="dot" style="background-color: #3B82F6;"></div> Menunggu Persetujuan</div>
+                            <div class="legend-value">7</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-label"><div class="dot" style="background-color: #1E3A8A;"></div> Dalam Perbaikan</div>
+                            <div class="legend-value">9</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-label"><div class="dot" style="background-color: #60A5FA;"></div> Menunggu Suku Cadang</div>
+                            <div class="legend-value">5</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-label"><div class="dot" style="background-color: #93C5FD;"></div> QC</div>
+                            <div class="legend-value">8</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-label"><div class="dot" style="background-color: #4B5563;"></div> Selesai</div>
+                            <div class="legend-value">15</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Box Ringkasan Keuangan (Kanan) -->
+            <div class="card-box">
+                <div class="card-title">Ringkasan Keuangan<br>(Hari Ini)</div>
+                
+                <div class="finance-item">
+                    <div class="finance-title">Total Pemasukan</div>
+                    <div class="finance-amount">Rp 4.750.000</div>
+                    <div class="badge-green">↑ + 12% dari kemarin</div>
+                </div>
+
+                <div class="finance-item">
+                    <div class="finance-title">Total Pemasukan</div>
+                    <div class="finance-amount">Rp 1.230.000</div>
+                    <div class="badge-green">↑ + 5% dari kemarin</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Box Aktivitas Teknisi (Dikembalikan 3 Data) -->
+        <div class="card-box" style="padding: 0; overflow: hidden; margin-bottom: 40px;">
+            <div class="card-title" style="padding: 20px 25px 10px 25px; margin-bottom: 10px;">Aktivitas Teknisi (Hari Ini)</div>
+            
+            <table class="table-container">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Nama Teknisi</th>
+                        <th>Waktu Masuk</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1.</td>
+                        <td>Raka Putra</td>
+                        <td>08:00</td>
+                        <td>Aktif</td>
+                    </tr>
+                    <tr>
+                        <td>2.</td>
+                        <td>Dimas Arya</td>
+                        <td>09:00</td>
+                        <td>Aktif</td>
+                    </tr>
+                    <tr>
+                        <td>3.</td>
+                        <td>Rizky Saputra</td>
+                        <td>10:00</td>
+                        <td>Aktif</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- Script Fungsional Lonceng Dropdown -->
+    <script>
+        const bellIcon = document.getElementById('bellIcon');
+        const notifDropdown = document.getElementById('notifDropdown');
+
+        if (bellIcon && notifDropdown) {
+            bellIcon.addEventListener('click', function(e) {
+                notifDropdown.classList.toggle('show');
+                e.stopPropagation(); 
+            });
+
+            window.addEventListener('click', function(e) {
+                if (!notifDropdown.contains(e.target) && e.target !== bellIcon) {
+                    notifDropdown.classList.remove('show');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
