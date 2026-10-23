@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiQ - Profile Teknisi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            background-color: #E2EFFC; 
+            min-height: 100vh;
+            color: #000;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 260px;
+            background-color: #FFFFFF;
+            border-right: 3px solid #000;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar::-webkit-scrollbar { display: none; }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 25px 20px;
+            font-size: 26px;
+            font-weight: 700;
+            color: #000;
+        }
+        
+        .logo img {
+            width: 45px;
+            height: auto;
+        }
+
+        .menu-section { padding: 10px 15px; flex: 1; }
+
+        .menu-item {
+            display: block;
+            padding: 12px 15px;
+            margin-bottom: 5px; 
+            border-radius: 8px;
+            text-decoration: none;
+            color: #000;
+            font-weight: 600;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+
+        .menu-item:hover { background-color: #EBF3FF; }
+        
+        .menu-item.active {
+            background-color: #60AFFF; 
+            color: #000;
+            font-weight: 700;
+        }
+
+        .sidebar-bottom { padding: 10px 15px; border-top: 1px solid #ddd; }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        /* TOPBAR & NOTIFIKASI */
+        .topbar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 15px 40px;
+            background-color: #FFFFFF;
+            border-bottom: 2px solid #000;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .notification-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-icon {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-dropdown {
+            display: none;
+            position: absolute;
+            top: 35px;
+            right: 0;
+            width: 320px;
+            background-color: #FFFFFF;
+            border: 1px solid #000;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .notification-dropdown.show { display: block; }
+
+        .notif-header {
+            background-color: #60AFFF;
+            color: #000;
+            padding: 12px 15px;
+            font-weight: 700;
+            font-size: 14px;
+            border-bottom: 1px solid #000;
+        }
+
+        .notif-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            font-size: 13px;
+            color: #333;
+            cursor: pointer;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .notif-item:hover { background-color: #EBF3FF; }
+        .notif-item:last-child { border-bottom: none; }
+        
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* CONTENT PADDING */
+        .content-body { padding: 30px 40px; }
+
+        /* PROFILE STYLING */
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .page-header p {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .profile-grid {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* CARD STYLES */
+        .card {
+            background-color: #FFFFFF;
+            border: 1px solid #1F5FA6; /* Sedikit biru gelap menyesuaikan desain gambar */
+            border-radius: 8px;
+            padding: 25px;
+        }
+
+        .card-photo {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .profile-placeholder {
+            width: 150px;
+            height: 150px;
+            background-color: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFF;
+        }
+
+        .card-info {
+            flex: 2;
+        }
+
+        .card-password {
+            width: 100%;
+        }
+
+        .card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        /* FORM STYLES */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #888;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            background-color: #F9F9F9;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #1F5FA6;
+        }
+
+        .password-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .password-row .form-group {
+            flex: 1;
+        }
+
+        /* TAMBAHAN UNTUK MATA PASSWORD */
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .password-wrapper input {
+            padding-right: 40px; /* Memberi ruang agar teks tidak tertimpa ikon mata */
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            cursor: pointer;
+            color: #888;
+        }
+        .toggle-password:hover {
+            color: #1F5FA6;
+        }
+
+        /* BUTTON STYLES */
+        .btn-action {
+            background-color: #1F5FA6;
+            color: #FFF;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-action:hover {
+            background-color: #164882;
+        }
+
+        .action-right {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">
+            <img src="logo.png" alt="Logo ServiQ">
+            <span>ServiQ</span>
+        </div>
+        
+        <div class="menu-section">
+            <a href="dashboard_teknisi.html" class="menu-item">Dashboard</a>
+            <a href="tugas_servis.html" class="menu-item">Tugas Servis</a>
+            <a href="quality_control.html" class="menu-item">Quality Control</a>
+            <a href="riwayat_servis.html" class="menu-item">Riwayat Servis</a>
+            <a href="pengadaan_suku_cadang.html" class="menu-item">Pengadaan Suku Cadang</a>
+            <a href="profile_teknisi.html" class="menu-item active">Profile</a>
+        </div>
+
+        <div class="sidebar-bottom">
+            <a href="login.html" class="menu-item">Keluar</a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <!-- TOPBAR -->
+        <div class="topbar">
+            <div class="user-info">
+                <div class="notification-wrapper">
+                    <div class="notification-icon" id="bellIcon" title="Pemberitahuan">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    </div>
+                    <div class="notification-dropdown" id="notifDropdown">
+                        <div class="notif-header">Notifikasi Baru</div>
+                        <div class="notif-item"><strong>Admin:</strong> Permintaan pengadaan #1026 telah disetujui.</div>
+                    </div>
+                </div>
+                
+                <div class="profile-info">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Rizky
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENT BODY -->
+        <div class="content-body">
+            
+            <div class="page-header">
+                <h1>Profil Saya</h1>
+                <p>Kelola informasi akun Anda</p>
+            </div>
+
+            <!-- BAGIAN ATAS: FOTO & INFORMASI PRIBADI -->
+            <div class="profile-grid">
+                
+                <!-- Card Ubah Foto -->
+                <div class="card card-photo">
+                    <div class="profile-placeholder">
+                        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    </div>
+                    
+                    <button class="btn-action" onclick="document.getElementById('uploadFoto').click()">Ubah Foto</button>
+                    <!-- Input file hidden -->
+                    <input type="file" id="uploadFoto" accept="image/*" style="display: none;" onchange="alert('Foto berhasil dipilih: ' + this.files[0].name)">
+                </div>
+
+                <!-- Card Informasi Pribadi -->
+                <div class="card card-info">
+                    <h3>Informasi Pribadi</h3>
+                    <div class="form-group">
+                        <label>Nama Lengkap</label>
+                        <input type="text" id="inputNama" value="Rizky">
+                    </div>
+                    <div class="form-group">
+                        <label>Nomor Telepon</label>
+                        <input type="text" id="inputTelepon" value="0812 3456 7890">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="inputEmail" value="rizky@gmail.com">
+                    </div>
+                    
+                    <div class="action-right">
+                        <button class="btn-action" onclick="simpanProfil()">Ubah Profil</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- BAGIAN BAWAH: UBAH PASSWORD -->
+            <div class="card card-password">
+                <h3>Ubah Password</h3>
+                
+                <div class="password-row">
+                    <div class="form-group">
+                        <label>Password Lama</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="inputPasswordLama" placeholder="Masukkan password lama">
+                            <svg class="toggle-password" onclick="togglePassword('inputPasswordLama', this)" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Password Baru</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="inputPasswordBaru" placeholder="Masukkan password baru">
+                            <svg class="toggle-password" onclick="togglePassword('inputPasswordBaru', this)" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-right">
+                    <button class="btn-action" onclick="simpanPassword()">Simpan</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SCRIPT FUNCTIONAL -->
+    <script>
+        // Notifikasi Dropdown
+        const bellIcon = document.getElementById('bellIcon');
+        const notifDropdown = document.getElementById('notifDropdown');
+
+        if (bellIcon && notifDropdown) {
+            bellIcon.addEventListener('click', function(e) {
+                notifDropdown.classList.toggle('show');
+                e.stopPropagation(); 
+            });
+
+            window.addEventListener('click', function(e) {
+                if (!notifDropdown.contains(e.target) && e.target !== bellIcon) {
+                    notifDropdown.classList.remove('show');
+                }
+            });
+        }
+
+        // Action Functions
+        function simpanProfil() {
+            const nama = document.getElementById('inputNama').value;
+            if(nama) {
+                alert("Informasi Profil berhasil diperbarui!");
+            } else {
+                alert("Nama tidak boleh kosong!");
+            }
+        }
+
+        function simpanPassword() {
+            const pwLama = document.getElementById('inputPasswordLama').value;
+            const pwBaru = document.getElementById('inputPasswordBaru').value;
+            
+            if(pwLama && pwBaru) {
+                alert("Password berhasil diubah!");
+                document.getElementById('inputPasswordLama').value = '';
+                document.getElementById('inputPasswordBaru').value = '';
+            } else {
+                alert("Harap isi Password Lama dan Password Baru terlebih dahulu.");
+            }
+        }
+
+        // FUNGSI UNTUK TOGGLE MATA PASSWORD
+        function togglePassword(inputId, icon) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                // Mengubah icon menjadi mata dicoret (eye-off)
+                icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+            } else {
+                input.type = "password";
+                // Mengubah icon kembali menjadi mata terbuka (eye)
+                icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+            }
+        }
+    </script>
+</body>
+</html>

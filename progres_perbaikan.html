@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiQ - Progres Perbaikan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            background-color: #E2EFFC; 
+            min-height: 100vh;
+            color: #000;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 260px;
+            background-color: #FFFFFF;
+            border-right: 3px solid #000;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar::-webkit-scrollbar { display: none; }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 25px 20px;
+            font-size: 26px;
+            font-weight: 700;
+            color: #000;
+        }
+        
+        .logo img {
+            width: 45px;
+            height: auto;
+        }
+
+        .menu-section { padding: 10px 15px; flex: 1; }
+
+        .menu-item {
+            display: block;
+            padding: 12px 15px;
+            margin-bottom: 5px; 
+            border-radius: 8px;
+            text-decoration: none;
+            color: #000;
+            font-weight: 600;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+
+        .menu-item:hover { background-color: #EBF3FF; }
+        
+        .menu-item.active {
+            background-color: #60AFFF; 
+            color: #000;
+            font-weight: 700;
+        }
+
+        .sidebar-bottom { padding: 10px 15px; border-top: 1px solid #ddd; }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        /* TOPBAR & NOTIFIKASI */
+        .topbar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 15px 40px;
+            background-color: #FFFFFF;
+            border-bottom: 2px solid #000;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .notification-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-icon {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-dropdown {
+            display: none;
+            position: absolute;
+            top: 35px;
+            right: 0;
+            width: 320px;
+            background-color: #FFFFFF;
+            border: 1px solid #000;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .notification-dropdown.show { display: block; }
+
+        .notif-header {
+            background-color: #60AFFF;
+            color: #000;
+            padding: 12px 15px;
+            font-weight: 700;
+            font-size: 14px;
+            border-bottom: 1px solid #000;
+        }
+
+        .notif-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            font-size: 13px;
+            color: #333;
+            cursor: pointer;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .notif-item:hover { background-color: #EBF3FF; }
+        .notif-item:last-child { border-bottom: none; }
+        
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* CONTENT PADDING */
+        .content-body { padding: 30px 40px; }
+
+        /* BACK LINK & HEADER */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 600;
+            color: #000;
+            text-decoration: none;
+            margin-bottom: 25px;
+        }
+
+        .back-link:hover { text-decoration: underline; }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        /* TOP STATUS BAR */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            background-color: #FFFFFF;
+            border: 1px solid #888;
+            border-radius: 8px;
+            padding: 15px 25px;
+            margin-bottom: 20px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .badge-green {
+            background-color: #C2E5A9;
+            color: #2D5A12;
+            border: 1px solid #7FA65F;
+            padding: 6px 15px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .badge-orange {
+            background-color: #E69532;
+            color: #FFF;
+            border: 1px solid #C4791E;
+            padding: 6px 15px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* GRID LAYOUT */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* KIRI: TABEL SUKU CADANG & TINDAKAN PERBAIKAN */
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background-color: #FFFFFF;
+            border: 1px solid #888;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .card h3 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        /* TABEL SUKU CADANG */
+        .parts-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .parts-table th, .parts-table td {
+            border: 1px solid #888;
+            padding: 10px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .parts-table th {
+            background-color: #C1DDF7;
+            font-weight: 700;
+        }
+
+        .badge-tersedia {
+            background-color: #C2E5A9;
+            color: #2D5A12;
+            border: 1px solid #7FA65F;
+            padding: 4px 10px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .badge-tidak-tersedia {
+            background-color: #DDA298;
+            color: #793427;
+            border: 1px solid #A86558;
+            padding: 4px 10px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        /* TEXTAREA TINDAKAN */
+        .action-textarea {
+            width: 100%;
+            min-height: 80px;
+            border: none;
+            resize: none;
+            font-size: 13px;
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+        }
+
+        /* KANAN: INFORMASI STATUS & CATATAN PROGRES */
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .info-text {
+            font-size: 13px;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .notes-textarea {
+            width: 100%;
+            min-height: 150px;
+            background-color: #F8F5F5;
+            border: 1px solid #DDD;
+            border-radius: 6px;
+            padding: 15px;
+            font-size: 13px;
+            resize: vertical;
+            outline: none;
+        }
+
+        /* BOTTOM ACTION BAR */
+        .bottom-action-bar {
+            margin-top: 20px;
+            background-color: #9BC6F7;
+            border: 1px solid #000;
+            border-radius: 8px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .bottom-action-text {
+            font-size: 13px;
+            color: #333;
+            max-width: 60%;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .btn-save {
+            background-color: #1F5FA6;
+            color: #FFF;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-save:hover { background-color: #164882; }
+
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">
+            <img src="logo.png" alt="Logo ServiQ">
+            <span>ServiQ</span>
+        </div>
+        
+        <div class="menu-section">
+            <a href="dashboard_teknisi.html" class="menu-item">Dashboard</a>
+            <a href="tugas_servis.html" class="menu-item active">Tugas Servis</a>
+            <a href="quality_control.html" class="menu-item">Quality Control</a>
+            <a href="riwayat_servis.html" class="menu-item">Riwayat Servis</a>
+            <a href="pengadaan_suku_cadang.html" class="menu-item">Pengadaan Suku Cadang</a>
+            <a href="profile_teknisi.html" class="menu-item">Profile</a>
+        </div>
+
+        <div class="sidebar-bottom">
+            <a href="login.html" class="menu-item">Keluar</a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <!-- TOPBAR -->
+        <div class="topbar">
+            <div class="user-info">
+                <div class="notification-wrapper">
+                    <div class="notification-icon" id="bellIcon" title="Pemberitahuan">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    </div>
+                    <div class="notification-dropdown" id="notifDropdown">
+                        <div class="notif-header">Notifikasi Baru</div>
+                        <div class="notif-item"><strong>Admin:</strong> Tiket #1027 telah ditugaskan kepada Anda.</div>
+                        <div class="notif-item"><strong>Sistem:</strong> Suku cadang untuk Tiket #1025 telah tersedia.</div>
+                    </div>
+                </div>
+                
+                <div class="profile-info">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Rizky
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENT BODY -->
+        <div class="content-body">
+            
+            <a href="persetujuan_customer.html" class="back-link">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Kembali ke Persetujuan Customer
+            </a>
+
+            <h1 class="page-title">Progres Perbaikan - Tiket #1027</h1>
+
+            <!-- STATUS BAR -->
+            <div class="status-bar">
+                <div class="status-item">
+                    <span>Status Persetujuan</span>
+                    <div class="badge-green">Disetujui Customer</div>
+                </div>
+                <div class="status-item">
+                    <span>Status Pekerjaan</span>
+                    <div class="badge-orange">Menunggu suku cadang</div>
+                </div>
+            </div>
+
+            <!-- MAIN GRID -->
+            <div class="main-grid">
+                
+                <!-- KOLOM KIRI -->
+                <div class="left-column">
+                    <!-- Card Kebutuhan Suku Cadang -->
+                    <div class="card" style="padding: 0; overflow: hidden;">
+                        <h3 style="padding: 15px 15px 5px 15px;">Kebutuhan Suku Cadang (Untuk tiket ini)</h3>
+                        <table class="parts-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nama Suku cadang</th>
+                                    <th>Jumlah</th>
+                                    <th>Ketersediaan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>IC Display</td>
+                                    <td>1</td>
+                                    <td><span class="badge-tersedia">Tersedia</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Flex Kabel<br>Display</td>
+                                    <td>1</td>
+                                    <td><span class="badge-tidak-tersedia">Tidak Tersedia</span></td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>LCD</td>
+                                    <td>1</td>
+                                    <td><span class="badge-tidak-tersedia">Tidak Tersedia</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Card Tindakan Perbaikan -->
+                    <div class="card">
+                        <h3>Tindakan Perbaikan</h3>
+                        <textarea class="action-textarea" placeholder="Jelaskan langkah perbaikan yang direncanakan..."></textarea>
+                    </div>
+                </div>
+
+                <!-- KOLOM KANAN -->
+                <div class="right-column">
+                    <!-- Card Informasi Status -->
+                    <div class="card">
+                        <h3>Informasi Status</h3>
+                        <div class="info-text">
+                            <p style="margin-bottom: 15px;">Perbaikan BELUM DAPAT dijalankan karena komponen yang dibutuhkan belum tersedia.</p>
+                            <p>Menunggu pengadaan oleh Admin/Staff</p>
+                        </div>
+                    </div>
+
+                    <!-- Card Catatan Progres -->
+                    <div class="card">
+                        <h3>Catatan Progres</h3>
+                        <textarea class="notes-textarea" placeholder="Catatan progres terbaru..."></textarea>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- BOTTOM ACTION BAR -->
+            <div class="bottom-action-bar">
+                <div class="bottom-action-text">
+                    Jika semua komponen yang dibutuhkan tersedia, ubah status pekerjaan menjadi DALAM PERBAIKAN proses perbaikan.
+                </div>
+                <button class="btn-save" onclick="simpanPerubahan()">Simpan perubahan</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SCRIPT -->
+    <script>
+        // Notifikasi Dropdown
+        const bellIcon = document.getElementById('bellIcon');
+        const notifDropdown = document.getElementById('notifDropdown');
+
+        if (bellIcon && notifDropdown) {
+            bellIcon.addEventListener('click', function(e) {
+                notifDropdown.classList.toggle('show');
+                e.stopPropagation(); 
+            });
+
+            window.addEventListener('click', function(e) {
+                if (!notifDropdown.contains(e.target) && e.target !== bellIcon) {
+                    notifDropdown.classList.remove('show');
+                }
+            });
+        }
+
+        // Fungsi Simpan Perubahan
+        function simpanPerubahan() {
+            alert("Perubahan progres perbaikan berhasil disimpan!");
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiQ - Persetujuan Customer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            background-color: #E2EFFC; 
+            min-height: 100vh;
+            color: #000;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 260px;
+            background-color: #FFFFFF;
+            border-right: 3px solid #000;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar::-webkit-scrollbar { display: none; }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 25px 20px;
+            font-size: 26px;
+            font-weight: 700;
+            color: #000;
+        }
+        
+        .logo img {
+            width: 45px;
+            height: auto;
+        }
+
+        .menu-section { padding: 10px 15px; flex: 1; }
+
+        .menu-item {
+            display: block;
+            padding: 12px 15px;
+            margin-bottom: 5px; 
+            border-radius: 8px;
+            text-decoration: none;
+            color: #000;
+            font-weight: 600;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+
+        .menu-item:hover { background-color: #EBF3FF; }
+        
+        .menu-item.active {
+            background-color: #60AFFF; 
+            color: #000;
+            font-weight: 700;
+        }
+
+        .sidebar-bottom { padding: 10px 15px; border-top: 1px solid #ddd; }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        /* TOPBAR & NOTIFIKASI */
+        .topbar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 15px 40px;
+            background-color: #FFFFFF;
+            border-bottom: 2px solid #000;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .notification-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-icon {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-dropdown {
+            display: none;
+            position: absolute;
+            top: 35px;
+            right: 0;
+            width: 320px;
+            background-color: #FFFFFF;
+            border: 1px solid #000;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .notification-dropdown.show { display: block; }
+
+        .notif-header {
+            background-color: #60AFFF;
+            color: #000;
+            padding: 12px 15px;
+            font-weight: 700;
+            font-size: 14px;
+            border-bottom: 1px solid #000;
+        }
+
+        .notif-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            font-size: 13px;
+            color: #333;
+            cursor: pointer;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .notif-item:hover { background-color: #EBF3FF; }
+        .notif-item:last-child { border-bottom: none; }
+        
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* CONTENT PADDING */
+        .content-body { padding: 30px 40px; }
+
+        /* BACK LINK & HEADER */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 600;
+            color: #000;
+            text-decoration: none;
+            margin-bottom: 25px;
+        }
+
+        .back-link:hover { text-decoration: underline; }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        /* CARDS STYLING */
+        .card {
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #000;
+        }
+
+        .card-blue {
+            background-color: #9BC6F7; /* Warna biru sesuai desain */
+        }
+
+        .card-white {
+            background-color: #FFFFFF;
+        }
+
+        .card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .info-row {
+            display: flex;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .info-row .label {
+            width: 200px; /* Lebar label yang sejajar */
+            flex-shrink: 0;
+        }
+
+        .info-row .colon {
+            margin-right: 10px;
+        }
+
+        /* STATUS BADGE */
+        .status-badge {
+            background-color: #D3F1B2;
+            color: #E74C3C;
+            border: 1px solid #000;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .status-badge .icon-info {
+            background-color: #000;
+            color: #FFF;
+            border-radius: 50%;
+            width: 14px;
+            height: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-family: serif;
+        }
+
+        /* CATATAN TEKNISI */
+        .notes-textarea {
+            width: 100%;
+            min-height: 120px;
+            background-color: #F8F5F5;
+            border: none;
+            border-radius: 6px;
+            padding: 15px;
+            font-size: 14px;
+            resize: vertical;
+            margin-bottom: 15px;
+            outline: none;
+        }
+        
+        .notes-textarea::placeholder { color: #888; }
+
+        .btn-update {
+            background-color: #1F5FA6;
+            color: #FFF;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            float: right;
+            transition: 0.2s;
+        }
+
+        .btn-update:hover { background-color: #164882; }
+        
+        /* Clearfix untuk float right button */
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        /* BOTTOM ACTION BUTTON */
+        .action-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            margin-bottom: 40px;
+        }
+
+        .btn-progress {
+            background-color: #1F5FA6;
+            color: #FFF;
+            text-decoration: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .btn-progress:hover { background-color: #164882; }
+
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">
+            <img src="logo.png" alt="Logo ServiQ">
+            <span>ServiQ</span>
+        </div>
+        
+        <div class="menu-section">
+            <a href="dashboard_teknisi.html" class="menu-item">Dashboard</a>
+            <a href="tugas_servis.html" class="menu-item active">Tugas Servis</a>
+            <a href="quality_control.html" class="menu-item">Quality Control</a>
+            <a href="riwayat_servis.html" class="menu-item">Riwayat Servis</a>
+            <a href="pengadaan_suku_cadang.html" class="menu-item">Pengadaan Suku Cadang</a>
+            <a href="profile_teknisi.html" class="menu-item">Profile</a>
+        </div>
+
+        <div class="sidebar-bottom">
+            <a href="login.html" class="menu-item">Keluar</a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <!-- TOPBAR -->
+        <div class="topbar">
+            <div class="user-info">
+                <div class="notification-wrapper">
+                    <div class="notification-icon" id="bellIcon" title="Pemberitahuan">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    </div>
+                    <div class="notification-dropdown" id="notifDropdown">
+                        <div class="notif-header">Notifikasi Baru</div>
+                        <div class="notif-item"><strong>Admin:</strong> Tiket #1027 telah ditugaskan kepada Anda.</div>
+                        <div class="notif-item"><strong>Sistem:</strong> Suku cadang untuk Tiket #1025 telah tersedia.</div>
+                    </div>
+                </div>
+                
+                <div class="profile-info">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Rizky
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENT BODY -->
+        <div class="content-body">
+            
+            <a href="detail_tiket_diagnosis.html" class="back-link">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Kembali ke Detail Tiket
+            </a>
+
+            <h1 class="page-title">Persetujuan Customer - Tiket #1027</h1>
+
+            <!-- CARD DATA PELANGGAN (BIRU) -->
+            <div class="card card-blue">
+                <h3>Data Pelanggan</h3>
+                <div class="info-row">
+                    <span class="label">Hasil Diagnosis</span>
+                    <span class="colon">:</span> 
+                    <span>Kerusakan pada Layar LCD menyebabkan layar mati sesekali</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Tindaka yang Disarankan</span>
+                    <span class="colon">:</span> 
+                    <span>Ganti Layar LCD</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Estimasi Biaya</span>
+                    <span class="colon">:</span> 
+                    <span>Rp 1.250.000</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Estimasi Waktu</span>
+                    <span class="colon">:</span> 
+                    <span>2 - 3 hari kerja</span>
+                </div>
+            </div>
+
+            <!-- CARD STATUS PERSETUJUAN (PUTIH) -->
+            <div class="card card-white">
+                <h3>Status Persetujuan Customer</h3>
+                <div class="info-row" style="align-items: center;">
+                    <span class="label" style="width: auto; margin-right: 15px;">Status</span>
+                    <span class="colon">:</span> 
+                    <div class="status-badge">
+                        <span class="icon-info">i</span> MENUNGGU JAWABAN
+                    </div>
+                </div>
+                <div class="info-row" style="margin-top: 5px;">
+                    <span>Dikirim ke cutomer pada : 4 Oktober 2026 16.20</span>
+                </div>
+            </div>
+
+            <!-- CARD CATATAN TEKNISI (BIRU) -->
+            <div class="card card-blue clearfix">
+                <h3>Catatan Teknisi (Opsional)</h3>
+                <textarea class="notes-textarea" placeholder="Tulis catatan tambahan..."></textarea>
+                <button class="btn-update" onclick="perbaruiCatatan()">Perbarui Catatan</button>
+            </div>
+
+            <!-- TOMBOL LIHAT PROGRESS -->
+            <div class="action-container">
+                <a href="progres_perbaikan.html" class="btn-progress">Lihat Progress Perbaikan</a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SCRIPT -->
+    <script>
+        // Notifikasi Dropdown
+        const bellIcon = document.getElementById('bellIcon');
+        const notifDropdown = document.getElementById('notifDropdown');
+
+        if (bellIcon && notifDropdown) {
+            bellIcon.addEventListener('click', function(e) {
+                notifDropdown.classList.toggle('show');
+                e.stopPropagation(); 
+            });
+
+            window.addEventListener('click', function(e) {
+                if (!notifDropdown.contains(e.target) && e.target !== bellIcon) {
+                    notifDropdown.classList.remove('show');
+                }
+            });
+        }
+
+        // Fungsi Perbarui Catatan
+        function perbaruiCatatan() {
+            alert("Catatan berhasil diperbarui!");
+        }
+    </script>
+</body>
+</html>

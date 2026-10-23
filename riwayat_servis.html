@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiQ - Riwayat Servis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            background-color: #E2EFFC; 
+            min-height: 100vh;
+            color: #000;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 260px;
+            background-color: #FFFFFF;
+            border-right: 3px solid #000;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar::-webkit-scrollbar { display: none; }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 25px 20px;
+            font-size: 26px;
+            font-weight: 700;
+            color: #000;
+        }
+        
+        .logo img {
+            width: 45px;
+            height: auto;
+        }
+
+        .menu-section { padding: 10px 15px; flex: 1; }
+
+        .menu-item {
+            display: block;
+            padding: 12px 15px;
+            margin-bottom: 5px; 
+            border-radius: 8px;
+            text-decoration: none;
+            color: #000;
+            font-weight: 600;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+
+        .menu-item:hover { background-color: #EBF3FF; }
+        
+        .menu-item.active {
+            background-color: #60AFFF; 
+            color: #000;
+            font-weight: 700;
+        }
+
+        .sidebar-bottom { padding: 10px 15px; border-top: 1px solid #ddd; }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        /* TOPBAR & NOTIFIKASI */
+        .topbar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 15px 40px;
+            background-color: #FFFFFF;
+            border-bottom: 2px solid #000;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .notification-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-icon {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-dropdown {
+            display: none;
+            position: absolute;
+            top: 35px;
+            right: 0;
+            width: 320px;
+            background-color: #FFFFFF;
+            border: 1px solid #000;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .notification-dropdown.show { display: block; }
+
+        .notif-header {
+            background-color: #60AFFF;
+            color: #000;
+            padding: 12px 15px;
+            font-weight: 700;
+            font-size: 14px;
+            border-bottom: 1px solid #000;
+        }
+
+        .notif-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            font-size: 13px;
+            color: #333;
+            cursor: pointer;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .notif-item:hover { background-color: #EBF3FF; }
+        .notif-item:last-child { border-bottom: none; }
+        
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* CONTENT PADDING */
+        .content-body { padding: 30px 40px; }
+
+        .page-title {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 25px;
+        }
+
+        /* FILTER BAR */
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 2;
+            display: flex;
+            align-items: center;
+            background-color: #8BB9F9;
+            border-radius: 8px;
+            border: 1px solid #73a3e6;
+            padding-left: 15px;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            padding: 12px 15px 12px 10px;
+            font-size: 14px;
+            color: #000;
+            outline: none;
+        }
+        
+        .search-box input::placeholder { color: #222; }
+
+        .date-picker-box {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background-color: #8BB9F9;
+            border-radius: 8px;
+            border: 1px solid #73a3e6;
+            padding: 0 12px;
+            position: relative;
+        }
+
+        .date-picker-box input[type="date"] {
+            width: 100%;
+            background: transparent;
+            border: none;
+            padding: 12px 5px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #000;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .btn-search-date {
+            background-color: #A0B4C8;
+            color: #000;
+            border: 1px solid #778899;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-search-date:hover {
+            background-color: #8C9EA8;
+        }
+
+        /* TABLE STYLING */
+        .table-container {
+            background-color: #FFFFFF;
+            border: 2px solid #000;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 18px 15px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        th {
+            background-color: #BCD9FB;
+            font-weight: 700;
+        }
+
+        tr:nth-child(even) td { background-color: #EEEEEE; }
+
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">
+            <img src="logo.png" alt="Logo ServiQ">
+            <span>ServiQ</span>
+        </div>
+        
+        <div class="menu-section">
+            <a href="dashboard_teknisi.html" class="menu-item">Dashboard</a>
+            <a href="tugas_servis.html" class="menu-item">Tugas Servis</a>
+            <a href="quality_control.html" class="menu-item">Quality Control</a>
+            <a href="riwayat_servis.html" class="menu-item active">Riwayat Servis</a>
+            <a href="pengadaan_suku_cadang.html" class="menu-item">Pengadaan Suku Cadang</a>
+            <a href="profile_teknisi.html" class="menu-item">Profile</a>
+        </div>
+
+        <div class="sidebar-bottom">
+            <a href="login.html" class="menu-item">Keluar</a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <!-- TOPBAR -->
+        <div class="topbar">
+            <div class="user-info">
+                <div class="notification-wrapper">
+                    <div class="notification-icon" id="bellIcon" title="Pemberitahuan">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    </div>
+                    <div class="notification-dropdown" id="notifDropdown">
+                        <div class="notif-header">Notifikasi Baru</div>
+                        <div class="notif-item"><strong>Sistem:</strong> Tiket #1019 telah dipindahkan ke riwayat servis.</div>
+                    </div>
+                </div>
+                
+                <div class="profile-info">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    Rizky
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENT BODY -->
+        <div class="content-body">
+            
+            <h1 class="page-title">Riwayat Servis</h1>
+
+            <!-- FILTERS -->
+            <div class="filter-bar">
+                <!-- Pencarian Kata Kunci -->
+                <div class="search-box">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="searchInput" placeholder="Cari berdasarkan No. Tiket / Perangkat">
+                </div>
+
+                <!-- Date Picker Dari Tanggal -->
+                <div class="date-picker-box">
+                    <input type="date" id="startDate" title="Dari Tanggal">
+                </div>
+
+                <!-- Date Picker Sampai Tanggal -->
+                <div class="date-picker-box">
+                    <input type="date" id="endDate" title="Sampai Tanggal">
+                </div>
+
+                <!-- Tombol Cari -->
+                <button class="btn-search-date" id="btnFilterDate">Cari</button>
+            </div>
+
+            <!-- TABLE RIWAYAT -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No. Tiket</th>
+                            <th>Tanggal Selesai</th>
+                            <th>Perangkat</th>
+                            <th>Hasil Pekerjaan</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                        <tr data-date="2026-06-15">
+                            <td>#1019</td>
+                            <td>15 Jun 2026</td>
+                            <td>MacBook</td>
+                            <td>Layar LCD diganti</td>
+                            <td>Selesai</td>
+                        </tr>
+                        <tr data-date="2026-06-13">
+                            <td>#1018</td>
+                            <td>13 Jun 2026</td>
+                            <td>Laptop ASUS</td>
+                            <td>Cleaning + Cleaning Fan</td>
+                            <td>Selesai</td>
+                        </tr>
+                        <tr data-date="2026-06-07">
+                            <td>#1016</td>
+                            <td>7 Juni 2026</td>
+                            <td>Laptop ACER</td>
+                            <td>Ganti RAM 8 GB</td>
+                            <td>Selesai</td>
+                        </tr>
+                        <tr data-date="2026-05-30">
+                            <td>#1015</td>
+                            <td>30 Mei 2026</td>
+                            <td>MacBook Air</td>
+                            <td>Install Ulang macOS</td>
+                            <td>Selesai</td>
+                        </tr>
+                        <tr data-date="2026-05-21">
+                            <td>#1013</td>
+                            <td>21 Mei 2026</td>
+                            <td>Laptop HP</td>
+                            <td>Ganti Keyboard</td>
+                            <td>Selesai</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SCRIPT FUNCTIONAL -->
+    <script>
+        // Notifikasi Dropdown
+        const bellIcon = document.getElementById('bellIcon');
+        const notifDropdown = document.getElementById('notifDropdown');
+
+        if (bellIcon && notifDropdown) {
+            bellIcon.addEventListener('click', function(e) {
+                notifDropdown.classList.toggle('show');
+                e.stopPropagation(); 
+            });
+
+            window.addEventListener('click', function(e) {
+                if (!notifDropdown.contains(e.target) && e.target !== bellIcon) {
+                    notifDropdown.classList.remove('show');
+                }
+            });
+        }
+
+        // Search & Date Filter Functionality
+        const searchInput = document.getElementById('searchInput');
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        const btnFilterDate = document.getElementById('btnFilterDate');
+        const tableRows = document.querySelectorAll('#historyTableBody tr');
+
+        function filterHistoryTable() {
+            const keyword = searchInput.value.toLowerCase();
+            const startDateVal = startDateInput.value; // Format: YYYY-MM-DD
+            const endDateVal = endDateInput.value;     // Format: YYYY-MM-DD
+
+            tableRows.forEach(row => {
+                const noTiket = row.cells[0].textContent.toLowerCase();
+                const perangkat = row.cells[2].textContent.toLowerCase();
+                const rowDate = row.getAttribute('data-date'); // YYYY-MM-DD
+
+                const matchKeyword = noTiket.includes(keyword) || perangkat.includes(keyword);
+                
+                let matchDate = true;
+                if (startDateVal && rowDate < startDateVal) matchDate = false;
+                if (endDateVal && rowDate > endDateVal) matchDate = false;
+
+                if (matchKeyword && matchDate) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // Live search pada kata kunci
+        searchInput.addEventListener('input', filterHistoryTable);
+
+        // Filter berdasarkan tombol "Cari" tanggal
+        btnFilterDate.addEventListener('click', filterHistoryTable);
+    </script>
+</body>
+</html>
