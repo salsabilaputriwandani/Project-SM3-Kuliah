@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ServiQ - Pembayaran</title>
+    <title>ServiQo - Pembayaran</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -370,7 +370,7 @@
     <div class="sidebar">
         <div class="logo">
             <img src="logo.png" alt="Logo">
-            <span>ServiQ</span>
+            <span>ServiQo</span>
         </div>
         
         <a href="dashboard_customer.html" class="menu-item">Dashboard</a>
@@ -380,7 +380,7 @@
         <a href="chat.html" class="menu-item">Chat</a>
         <a href="profile.html" class="menu-item">Profile</a>
 
-        <a href="login.html" class="menu-item logout">Keluar</a>
+        <a href="login_customer.html" class="menu-item logout">Keluar</a>
     </div>
 
     <div class="main-content">
@@ -441,18 +441,18 @@
                 <label>Pilih Bank Tujuan Transfer</label>
                 <select class="input-control" id="bankSelect" required>
                     <option value="">Pilih bank tujuan...</option>
-                    <option value="bca" data-rekening="8830 1234 56" data-nama="PT ServiQ Indonesia Center">Bank BCA</option>
-                    <option value="mandiri" data-rekening="1370 0012 345" data-nama="PT ServiQ Indonesia Center">Bank Mandiri</option>
-                    <option value="bri" data-rekening="0021 0100 1234 502" data-nama="PT ServiQ Indonesia Center">Bank BRI</option>
+                    <option value="bca" data-rekening="8830 1234 56" data-nama="PT ServiQo Indonesia Center">Bank BCA</option>
+                    <option value="mandiri" data-rekening="1370 0012 345" data-nama="PT ServiQo Indonesia Center">Bank Mandiri</option>
+                    <option value="bri" data-rekening="0021 0100 1234 502" data-nama="PT ServiQo Indonesia Center">Bank BRI</option>
                 </select>
 
                 <!-- Box Tampilan Rekening Tujuan ServiQ -->
                 <div class="bank-info-box" id="bankInfoBox">
-                    <div class="bank-info-header">Transfer ke Nomor Rekening Resmi ServiQ:</div>
+                    <div class="bank-info-header">Transfer ke Nomor Rekening Resmi ServiQo:</div>
                     <div class="bank-info-detail">
                         <div>
                             <div class="account-number" id="accountNumberText">-</div>
-                            <div class="account-name" id="accountNameText">a.n PT ServiQ Indonesia Center</div>
+                            <div class="account-name" id="accountNameText">a.n PT ServiQo Indonesia Center</div>
                         </div>
                         <button type="button" class="btn-copy" id="btnCopy" onclick="copyRekening()">Salin</button>
                     </div>
