@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ServiQ - Tiket Saya</title>
+    <title>ServiQo - Tiket Saya</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -389,6 +389,100 @@
             background-color: #D6E8FF;
         }
 
+        /* --- TAMBAHAN MODAL PERSETUJUAN --- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #FFFFFF;
+            width: 500px;
+            border-radius: 12px;
+            border: 2px solid #000;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .modal-header {
+            background: #89C4FF;
+            padding: 15px 20px;
+            border-bottom: 2px solid #000;
+            font-weight: 700;
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-close {
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 22px;
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 20px;
+            font-size: 14px;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 12px;
+        }
+
+        .info-label {
+            width: 150px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .info-value {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            background: #F9F9F9;
+        }
+
+        .btn-modal {
+            padding: 10px 25px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border: 1px solid #000;
+            transition: 0.2s;
+        }
+
+        .btn-tolak {
+            background-color: #FF6B6B;
+            color: #fff;
+        }
+        .btn-tolak:hover { background-color: #E55A5A; }
+
+        .btn-setuju {
+            background-color: #5EBC8B;
+            color: #fff;
+        }
+        .btn-setuju:hover { background-color: #4DAA7A; }
+
     </style>
 </head>
 <body>
@@ -396,7 +490,7 @@
     <div class="sidebar">
         <div class="logo">
             <img src="logo.png" alt="Logo">
-            <span>ServiQ</span>
+            <span>ServiQo</span>
         </div>
         
         <a href="dashboard_customer.html" class="menu-item">Dashboard</a>
@@ -406,7 +500,7 @@
         <a href="chat.html" class="menu-item">Chat</a>
         <a href="profile.html" class="menu-item">Profile</a>
 
-        <a href="login.html" class="menu-item logout">Keluar</a>
+        <a href="login_customer.html" class="menu-item logout">Keluar</a>
     </div>
 
     <div class="main-content">
@@ -414,13 +508,18 @@
         <div class="topbar">
             <div class="user-info">
                 <div class="notification-wrapper">
+                    <!-- Notification Bell Ditambah Indikator Merah -->
                     <div class="notification-icon" id="bellIcon" title="Pemberitahuan">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                        <span style="position: absolute; top: -2px; right: -2px; width: 10px; height: 10px; background: red; border-radius: 50%; border: 2px solid #fff;"></span>
                     </div>
                     <div class="notification-dropdown" id="notifDropdown">
                         <div class="notif-header">Notifikasi Baru</div>
                         <div class="notif-item"><strong>Tiket #1023:</strong> Perangkat sedang dalam perbaikan.</div>
-                        <div class="notif-item"><strong>Tiket #1025:</strong> Menunggu persetujuan biaya dari Anda.</div>
+                        <!-- Notifikasi persetujuan diubah agar bisa diklik membuka pop-up -->
+                        <div class="notif-item" onclick="bukaModalPersetujuan()" style="background-color: #FFF3CD;">
+                            <strong>Tiket #1025:</strong> Teknisi meminta persetujuan untuk biaya dan waktu perbaikan. <u>Klik untuk rincian.</u>
+                        </div>
                     </div>
                 </div>
                 
@@ -495,7 +594,7 @@
                                 <div class="status-dot"></div> Menunggu persetujuan
                             </div>
                         </td>
-                        <td><a href="detail_tiket.html" class="btn-detail">Detail</a></td>
+                        <td><button onclick="bukaModalPersetujuan()" class="btn-detail" style="cursor: pointer;">Tinjau</button></td>
                     </tr>
                     <tr>
                         <td>#1028</td>
@@ -536,6 +635,46 @@
             </a>
         </div>
 
+    </div>
+
+    <!-- MODAL PERSETUJUAN CUSTOMER -->
+    <div class="modal-overlay" id="modalPersetujuan">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>Persetujuan Servis - Tiket #1025</span>
+                <span class="modal-close" onclick="tutupModalPersetujuan()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="info-row">
+                    <div class="info-label">Hasil Diagnosis:</div>
+                    <div class="info-value">Kerusakan pada Layar LCD menyebabkan layar mati sesekali</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Tindakan:</div>
+                    <div class="info-value">Ganti Layar LCD</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Suku Cadang:</div>
+                    <div class="info-value">IC Display, Flex Kabel Display, LCD</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Estimasi Biaya:</div>
+                    <div class="info-value" style="font-size: 16px; font-weight: 700; color: #D9534F;">Rp 1.250.000</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Estimasi Waktu:</div>
+                    <div class="info-value">2 - 3 hari kerja</div>
+                </div>
+                
+                <p style="margin-top: 15px; font-size: 13px; color: #666; font-style: italic;">
+                    Apakah Anda menyetujui rincian diagnosis, penggantian suku cadang, serta estimasi biaya dan waktu di atas?
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-tolak" onclick="tutupModalPersetujuan()">Tolak</button>
+                <button class="btn-modal btn-setuju" onclick="setujuiPekerjaan()">Setujui</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -581,6 +720,32 @@
                 }
             });
         }
+
+        // --- TAMBAHAN JAVASCRIPT UNTUK MODAL ---
+        const modalPersetujuan = document.getElementById('modalPersetujuan');
+
+        function bukaModalPersetujuan() {
+            modalPersetujuan.classList.add('show');
+            // Menutup notifikasi dropdown jika modal terbuka dari dalam dropdown
+            document.getElementById('notifDropdown').classList.remove('show');
+        }
+
+        function tutupModalPersetujuan() {
+            modalPersetujuan.classList.remove('show');
+        }
+
+        function setujuiPekerjaan() {
+            alert('Persetujuan perbaikan dan biaya berhasil dikirim ke teknisi!');
+            tutupModalPersetujuan();
+            // (Opsional) Refresh halaman atau ganti status tiket menjadi 'Disetujui' via backend di sini
+        }
+
+        // Menutup modal jika area gelap (overlay) diklik
+        window.addEventListener('click', function(e) {
+            if (e.target === modalPersetujuan) {
+                tutupModalPersetujuan();
+            }
+        });
     </script>
 </body>
 </html>
