@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiQo - Produk & Layanan</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background-color: #EBF3FF;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 280px;
+            flex-shrink: 0;
+            background-color: #FFFFFF;
+            padding: 30px 20px;
+            border-right: 3px solid #000;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            font-size: 28px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .logo img {
+            width: 50px;
+            height: auto;
+        }
+
+        .menu-item {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #000;
+            font-weight: 600;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+        .menu-item:hover {
+            background-color: #D6E8FF;
+        }
+
+        .menu-item.active {
+            background-color: #60AFFF;
+        }
+
+        .menu-item.logout {
+            margin-top: auto;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            min-width: 0;
+            padding: 30px 45px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #000;
+            margin-bottom: 30px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .notification-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-icon {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .notification-dropdown {
+            display: none;
+            position: absolute;
+            top: 35px;
+            right: 0;
+            width: 300px;
+            background-color: #FFFFFF;
+            border: 1px solid #000;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .notification-dropdown.show {
+            display: block;
+        }
+
+        .notif-header {
+            background-color: #60AFFF;
+            padding: 12px 15px;
+            font-weight: 700;
+            font-size: 14px;
+            border-bottom: 1px solid #000;
+        }
+
+        .notif-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            font-size: 13px;
+            color: #333;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* PAGE HEADER */
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #000;
+        }
+
+        .header p {
+            font-size: 15px;
+            color: #333;
+        }
+
+        /* SECTION */
+        .catalog-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 21px;
+            font-weight: 700;
+            margin-bottom: 18px;
+            color: #000;
+        }
+
+        /* PRODUCT GRID */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .product-card {
+            background-color: #FFFFFF;
+            border: 1px solid #000;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+
+        .product-card:hover,
+        .service-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 5px 12px rgba(0,0,0,0.08);
+        }
+
+        /* LAPTOP IMAGE PLACEHOLDER */
+        .product-image {
+            height: 180px;
+            background-color: #F1F6FF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .laptop-illustration {
+            width: 170px;
+            text-align: center;
+        }
+
+        .laptop-screen {
+            width: 125px;
+            height: 80px;
+            margin: auto;
+            background: linear-gradient(135deg, #333, #777);
+            border: 5px solid #444;
+            border-radius: 7px 7px 3px 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .laptop-screen span {
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .laptop-base {
+            width: 160px;
+            height: 9px;
+            background-color: #999;
+            border-radius: 2px 2px 10px 10px;
+            margin: 0 auto;
+        }
+
+        .product-info {
+            padding: 18px;
+        }
+
+        .product-category {
+            font-size: 12px;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .product-info h3 {
+            font-size: 17px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .product-description {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.6;
+            min-height: 42px;
+            margin-bottom: 15px;
+        }
+
+        .product-price {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        /* BUTTON */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 7px;
+            background-color: #60AFFF;
+            color: #000;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #3697F5;
+        }
+
+        /* SERVICE GRID */
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .service-card {
+            background-color: #FFFFFF;
+            border: 1px solid #000;
+            border-radius: 12px;
+            padding: 22px;
+            transition: 0.3s;
+        }
+
+        .service-icon {
+            width: 48px;
+            height: 48px;
+            background-color: #DCEEFF;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .service-card h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .service-card p {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.6;
+            min-height: 63px;
+            margin-bottom: 18px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1100px) {
+            .product-grid,
+            .service-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 750px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: 3px solid #000;
+                padding: 15px;
+            }
+
+            .logo {
+                margin-bottom: 15px;
+            }
+
+            .menu-item {
+                margin-bottom: 5px;
+            }
+
+            .menu-item.logout {
+                margin-top: 10px;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .product-grid,
+            .service-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar {
+                margin-bottom: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+
+        <div class="logo">
+            <img src="logo.png" alt="Logo">
+            <span>ServiQo</span>
+        </div>
+
+        <a href="dashboard_customer.html" class="menu-item">Dashboard</a>
+
+        <a href="buat_permintaan.html" class="menu-item">
+            Buat Permintaan Service
+        </a>
+
+        <a href="produk_layanan.html" class="menu-item active">
+            Produk & Layanan
+        </a>
+
+        <a href="tiket_saya.html" class="menu-item">Tiket Saya</a>
+
+        <a href="riwayat_service.html" class="menu-item">Riwayat Service</a>
+
+        <a href="chat.html" class="menu-item">Chat</a>
+
+        <a href="profile.html" class="menu-item">Profile</a>
+
+        <a href="login_customer.html" class="menu-item logout">Keluar</a>
+
+    </div>
+
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+
+        <!-- TOPBAR -->
+        <div class="topbar">
+
+            <div class="user-info">
+
+                <div class="notification-wrapper">
+
+                    <div class="notification-icon" id="bellIcon"
+                         title="Pemberitahuan">
+
+                        <svg width="24" height="24" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor"
+                             stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round">
+
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+
+                        </svg>
+
+                    </div>
+
+                    <div class="notification-dropdown" id="notifDropdown">
+
+                        <div class="notif-header">
+                            Notifikasi Baru
+                        </div>
+
+                        <div class="notif-item">
+                            <strong>Tiket #1023:</strong>
+                            Perangkat sedang dalam perbaikan.
+                        </div>
+
+                        <div class="notif-item">
+                            <strong>Tiket #1025:</strong>
+                            Menunggu persetujuan biaya dari Anda.
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="profile-info">
+
+                    <svg width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round"
+                         stroke-linejoin="round">
+
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+
+                    </svg>
+
+                    Andi
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PAGE HEADER -->
+        <div class="header">
+
+            <h1>Produk & Layanan</h1>
+
+            <p>
+                Temukan berbagai pilihan laptop dan layanan service
+                yang tersedia di ServiQo.
+            </p>
+
+        </div>
+
+
+        <!-- PRODUCT SECTION -->
+        <section class="catalog-section">
+
+            <h2 class="section-title">Produk Laptop</h2>
+
+            <div class="product-grid">
+
+
+                <!-- PRODUCT 1 -->
+                <div class="product-card">
+
+                    <div class="product-image">
+
+                        <div class="laptop-illustration">
+
+                            <div class="laptop-screen">
+                                <span>ASUS</span>
+                            </div>
+
+                            <div class="laptop-base"></div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="product-info">
+
+                        <div class="product-category">
+                            Laptop
+                        </div>
+
+                        <h3>ASUS VivoBook</h3>
+
+                        <p class="product-description">
+                            Laptop untuk kebutuhan kuliah, pekerjaan,
+                            dan penggunaan sehari-hari.
+                        </p>
+
+                        <div class="product-price">
+                            Hubungi untuk harga
+                        </div>
+
+                        <a href="chat.html" class="btn">
+                            Tanya Produk
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PRODUCT 2 -->
+                <div class="product-card">
+
+                    <div class="product-image">
+
+                        <div class="laptop-illustration">
+
+                            <div class="laptop-screen">
+                                <span>LENOVO</span>
+                            </div>
+
+                            <div class="laptop-base"></div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="product-info">
+
+                        <div class="product-category">
+                            Laptop
+                        </div>
+
+                        <h3>Lenovo ThinkPad</h3>
+
+                        <p class="product-description">
+                            Laptop dengan desain profesional untuk
+                            produktivitas dan pekerjaan bisnis.
+                        </p>
+
+                        <div class="product-price">
+                            Hubungi untuk harga
+                        </div>
+
+                        <a href="chat.html" class="btn">
+                            Tanya Produk
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PRODUCT 3 -->
+                <div class="product-card">
+
+                    <div class="product-image">
+
+                        <div class="laptop-illustration">
+
+                            <div class="laptop-screen">
+                                <span>APPLE</span>
+                            </div>
+
+                            <div class="laptop-base"></div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="product-info">
+
+                        <div class="product-category">
+                            Laptop
+                        </div>
+
+                        <h3>Apple MacBook</h3>
+
+                        <p class="product-description">
+                            Laptop dengan desain premium untuk
+                            produktivitas dan kebutuhan kreatif.
+                        </p>
+
+                        <div class="product-price">
+                            Hubungi untuk harga
+                        </div>
+
+                        <a href="chat.html" class="btn">
+                            Tanya Produk
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- SERVICE SECTION -->
+        <section class="catalog-section">
+
+            <h2 class="section-title">Layanan Service</h2>
+
+            <div class="service-grid">
+
+
+                <!-- SERVICE 1 -->
+                <div class="service-card">
+
+                    <div class="service-icon">
+                        🔧
+                    </div>
+
+                    <h3>Perbaikan Laptop</h3>
+
+                    <p>
+                        Perbaikan berbagai kerusakan laptop,
+                        baik kerusakan hardware maupun software.
+                    </p>
+
+                    <a href="buat_permintaan.html" class="btn">
+                        Ajukan Service
+                    </a>
+
+                </div>
+
+
+                <!-- SERVICE 2 -->
+                <div class="service-card">
+
+                    <div class="service-icon">
+                        🧹
+                    </div>
+
+                    <h3>Cleaning & Maintenance</h3>
+
+                    <p>
+                        Pembersihan bagian dalam laptop dan
+                        perawatan untuk menjaga performa perangkat.
+                    </p>
+
+                    <a href="buat_permintaan.html" class="btn">
+                        Ajukan Service
+                    </a>
+
+                </div>
+
+
+                <!-- SERVICE 3 -->
+                <div class="service-card">
+
+                    <div class="service-icon">
+                        💻
+                    </div>
+
+                    <h3>Upgrade Hardware</h3>
+
+                    <p>
+                        Peningkatan kapasitas RAM, SSD,
+                        dan komponen lainnya sesuai kebutuhan.
+                    </p>
+
+                    <a href="buat_permintaan.html" class="btn">
+                        Ajukan Service
+                    </a>
+
+                </div>
+
+
+                <!-- SERVICE 4 -->
+                <div class="service-card">
+
+                    <div class="service-icon">
+                        ⚙️
+                    </div>
+
+                    <h3>Install Ulang & Software</h3>
+
+                    <p>
+                        Instalasi sistem operasi, driver,
+                        dan software sesuai kebutuhan pelanggan.
+                    </p>
+
+                    <a href="buat_permintaan.html" class="btn">
+                        Ajukan Service
+                    </a>
+
+                </div>
+
+
+                <!-- SERVICE 5 -->
+                <div class="service-card">
+
+                    <div class="service-icon">
+                        🌡️
+                    </div>
+
+                    <h3>Ganti Thermal Paste</h3>
+
+                    <p>
+                        Penggantian thermal paste untuk membantu
+                        menjaga suhu prosesor tetap optimal.
+                    </p>
+
+                    <a href="buat_permintaan.html" class="btn">
+                        Ajukan Service
+                    </a>
+
+                </div>
+
+
+                <!-- SERVICE 6 -->
+                <div class="service-card">
+
+                    <div class="service-icon">
+                        🔍
+                    </div>
+
+                    <h3>Diagnosis Laptop</h3>
+
+                    <p>
+                        Pemeriksaan perangkat untuk mengetahui
+                        penyebab kerusakan dan solusi perbaikan.
+                    </p>
+
+                    <a href="buat_permintaan.html" class="btn">
+                        Ajukan Service
+                    </a>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- JAVASCRIPT -->
+    <script>
+
+        const bellIcon = document.getElementById('bellIcon');
+        const notifDropdown = document.getElementById('notifDropdown');
+
+        if (bellIcon && notifDropdown) {
+
+            bellIcon.addEventListener('click', function(e) {
+
+                notifDropdown.classList.toggle('show');
+
+                e.stopPropagation();
+
+            });
+
+            window.addEventListener('click', function(e) {
+
+                if (!notifDropdown.contains(e.target) &&
+                    !bellIcon.contains(e.target)) {
+
+                    notifDropdown.classList.remove('show');
+
+                }
+
+            });
+
+        }
+
+    </script>
+
+</body>
+</html>
