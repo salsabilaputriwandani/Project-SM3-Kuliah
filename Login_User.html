@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ServiQo | Welcome Back</title>
+<style>
+:root{--blue:#2878c8;--dark:#155b9f;--ink:#18324b;--muted:#718399}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;padding:24px;display:grid;place-items:center;font-family:Inter,"Segoe UI",Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 8% 12%,#dceeff,transparent 30%),radial-gradient(circle at 92% 88%,#dff8f3,transparent 28%),#f4f8fd;transition:background .25s}
+button,input{font:inherit}
+.shell{position:relative;z-index:1;width:min(1050px,100%);min-height:630px;display:grid;grid-template-columns:1.04fr .96fr;background:white;border:1px solid #e4edf6;border-radius:28px;overflow:hidden;box-shadow:0 28px 80px #275b8f20;animation:enter .8s ease both}
+body.peek-mode{background:#07172a}
+.welcome{position:relative}
+body.peek-mode .welcome:after{content:"";position:absolute;inset:0;background:rgba(5,18,34,.78);z-index:10;pointer-events:none;animation:dim .25s ease}
+.welcome{position:relative;overflow:hidden;padding:38px 46px;color:white;background:linear-gradient(145deg,#2479ca,#3e9bdf 58%,#58b8df);display:flex;flex-direction:column;justify-content:space-between}
+.welcome:before{content:"";position:absolute;width:420px;height:420px;right:-180px;top:80px;border:1px solid #ffffff55;border-radius:50%;box-shadow:0 0 0 35px #ffffff0c,0 0 0 75px #ffffff0a}
+.brand{display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none;font-size:23px;font-weight:800;letter-spacing:-.7px;position:relative}
+.mark{width:39px;height:39px;display:grid;place-items:center;border-radius:13px;background:#ffffff30;border:1px solid #ffffff55}
+.mark svg{width:23px;height:23px}
+.copy{position:relative;max-width:420px;animation:rise .8s .15s both}
+.eyebrow{display:inline-flex;gap:8px;align-items:center;padding:8px 13px;border:1px solid #ffffff50;border-radius:30px;background:#ffffff18;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}
+.dot{width:7px;height:7px;border-radius:50%;background:#b8f3dc;box-shadow:0 0 0 4px #b8f3dc25}
+h1{font-size:clamp(38px,5vw,56px);line-height:1.04;letter-spacing:-2.7px;margin:23px 0 15px}
+.copy p{max-width:360px;color:#ffffffd9;line-height:1.75;margin:0}
+.robot-stage{height:260px;max-width:350px;width:100%;position:relative;margin:22px auto 0;display:grid;place-items:end center}
+.robot-shadow{position:absolute;bottom:8px;width:150px;height:18px;border-radius:50%;background:#124d8060;filter:blur(7px)}
+.robot{position:relative;width:150px;height:220px;animation:robotClimb 1.5s cubic-bezier(.2,.75,.25,1) both;transform-origin:bottom center;--look-x:0px;--look-y:0px}
+.robot-head{transition:transform .22s ease;transform:translate(var(--look-x),var(--look-y))}
+.robot.curious .robot-head{transform:translate(var(--look-x),var(--look-y)) rotate(-5deg)}
+.robot.shake{animation:robotShake .48s ease,robotFloat 3.4s .48s ease-in-out infinite}
+.robot.shake .robot-head{animation:headShake .48s ease}
+.robot.peek .robot-head{transform:translateY(3px) rotate(2deg)}
+.robot-head{position:absolute;top:8px;left:24px;width:102px;height:83px;border-radius:31px;background:linear-gradient(145deg,#fff,#dcecff);border:4px solid #d5e8fa;box-shadow:inset -7px -7px 0 #c6def4,0 12px 25px #164c7a35;z-index:2}
+.robot-head:before{content:"";position:absolute;top:-13px;left:43px;width:9px;height:15px;background:#d9ecff;border-radius:8px}
+.robot-head:after{content:"";position:absolute;top:-19px;left:45px;width:8px;height:8px;background:#ffe39a;border-radius:50%;box-shadow:0 0 12px #ffe39a}
+.ear{position:absolute;top:35px;width:13px;height:27px;border-radius:8px;background:#b9defb;border:3px solid #e8f4ff;z-index:1}
+.ear.left{left:15px}.ear.right{right:15px}
+.face{position:absolute;inset:0;display:flex;justify-content:center;align-items:center;gap:25px;padding-top:7px}
+.eye{width:10px;height:14px;border-radius:50%;background:#275b89;transform:translate(var(--pupil-x, 0px),var(--pupil-y, 0px));transition:all .18s}
+.robot.peek .eye{height:3px;width:15px;border-radius:50%;transform:translateY(5px)}
+.robot.peek .arm.left{top:78px;left:50px;right:auto;z-index:6;height:65px;rotate:160deg;animation:none;transform-origin:top center}
+.robot.peek .arm.right{top:78px;right:50px;left:auto;z-index:6;height:65px;rotate:-160deg;animation:none;transform-origin:top center}
+.robot.peek .arm.left .hand,.robot.peek .arm.right .hand{width:35px;height:34px;left:-7px;bottom:-8px;border-radius:45% 45% 48% 48%;background:linear-gradient(145deg,#fff,#e5f2ff);border:3px solid #b9d8f2;box-shadow:0 3px 9px #164c7a35}
+body.peek-mode #password{background:#fff;color:#102f4d;border:2px solid #4da3e8;box-shadow:0 0 0 4px #69baff66,0 0 24px #4da3e8cc;position:relative;z-index:7;font-weight:700}
+.cheek{position:absolute;top:52px;width:12px;height:7px;border-radius:50%;background:#ffb6bb88}
+.cheek.left{left:13px}.cheek.right{right:13px}
+.mouth{position:absolute;bottom:14px;left:45px;width:13px;height:7px;border-bottom:2px solid #5b86a8;border-radius:0 0 12px 12px}
+.robot-body{position:absolute;top:93px;left:35px;width:80px;height:93px;border-radius:25px 25px 21px 21px;background:linear-gradient(145deg,#fafdff,#c8e2f8);border:4px solid #d8eafa;box-shadow:inset -7px -5px 0 #bad7ef}
+.robot-panel{position:absolute;top:20px;left:19px;width:34px;height:24px;border-radius:8px;background:#eaf6ff;border:2px solid #a9cde9;display:grid;place-items:center;color:#3292cb;font-size:14px}
+.arm{position:absolute;top:104px;width:23px;height:65px;border-radius:15px;background:#e4f2ff;border:4px solid #d2e7f8;transform-origin:top center;transition:top .48s cubic-bezier(.2,.8,.2,1),left .48s cubic-bezier(.2,.8,.2,1),right .48s cubic-bezier(.2,.8,.2,1),rotate .48s cubic-bezier(.2,.8,.2,1),height .48s cubic-bezier(.2,.8,.2,1)}
+.arm.left{left:19px;transform:none;rotate:18deg}
+.arm.right{right:17px;top:78px;z-index:3;transform:none;rotate:-137deg;animation:wave .55s ease-in-out infinite alternate}
+.hand{position:absolute;bottom:-8px;left:-3px;width:25px;height:25px;border-radius:50%;background:#f8fcff;border:3px solid #c9e1f5;box-shadow:0 2px 5px #164c7a25}
+.leg{position:absolute;top:178px;width:23px;height:29px;border-radius:8px 8px 11px 11px;background:#d7eafa;border:3px solid #c4def4}
+.leg.left{left:48px}.leg.right{right:48px}
+.bubble{position:absolute;display:grid;place-items:center;box-shadow:0 12px 25px #0d447733;animation:bob 4s ease-in-out infinite}
+.b1{width:42px;height:42px;left:8px;top:68px;border-radius:15px;background:#ffe6a6;color:#8c6417;font-size:21px;transform:rotate(-12deg)}
+.b2{width:38px;height:38px;right:9px;top:24px;border-radius:50%;background:#b9f1e5;color:#187b73;font-size:18px;animation-delay:-1.4s}
+.b3{width:35px;height:35px;right:24px;bottom:24px;border-radius:12px;background:#ffd4d8;color:#b54e62;font-size:17px;animation-delay:-2.2s}
+.form-panel{display:flex;align-items:center;justify-content:center;padding:42px clamp(26px,6vw,68px)}
+.form{width:100%;max-width:360px;animation:rise .8s .25s both}
+.mobile-brand{display:none}
+.language-row{display:flex;justify-content:flex-end;margin-bottom:16px}
+.language-switch{display:flex;gap:3px;padding:4px;border:1px solid #e5edf5;border-radius:20px;background:#f7faff}
+.language-switch button{border:0;background:transparent;color:#8294a6;border-radius:15px;padding:6px 10px;font-size:11px;font-weight:800;cursor:pointer}
+.language-switch button.active{background:#2878c8;color:white;box-shadow:0 2px 7px #2878c833}
+.heading{margin-bottom:25px}
+.heading h2{font-size:30px;letter-spacing:-1px;margin:0 0 9px}
+.heading p{font-size:14px;line-height:1.6;color:var(--muted);margin:0}
+.field{margin-bottom:17px}
+.field label{display:block;margin-bottom:9px;font-size:13px;font-weight:700;color:#344b61}
+.inputwrap{position:relative}
+.inputwrap input{width:100%;height:49px;padding:0 58px 0 15px;border:1px solid #e5edf5;border-radius:12px;outline:none;background:#fbfdff;color:var(--ink);transition:.2s}
+.inputwrap input::placeholder{color:#aab7c5}
+.inputwrap input:focus{border-color:#5b9cda;background:white;box-shadow:0 0 0 4px #2878c81c}
+.suffix{position:absolute;right:15px;top:50%;transform:translateY(-50%);color:#91a5b8}
+.toggle{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--blue);font-size:11px;font-weight:800;padding:8px;cursor:pointer;z-index:8}
+.options{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:3px 0 20px;font-size:12px}
+.remember{display:flex;align-items:center;gap:8px;color:#687d91}
+.remember input{accent-color:var(--blue)}
+a.link{color:var(--blue);text-decoration:none;font-weight:700}
+.link:hover{text-decoration:underline}
+.submit{width:100%;height:50px;border:0;border-radius:12px;color:white;background:linear-gradient(100deg,#2878c8,#3997d5);box-shadow:0 9px 18px #2878c833;font-weight:800;transition:transform .2s,box-shadow .2s;cursor:pointer}
+.submit:hover{transform:translateY(-2px);box-shadow:0 13px 23px #2878c844}
+.submit:active{transform:scale(.99)}
+.message{min-height:18px;margin:9px 0 0;font-size:12px;line-height:1.5;color:#bd4d5c}
+.divider{display:flex;align-items:center;gap:12px;margin:16px 0;color:#a0afbd;font-size:10px}
+.divider:before,.divider:after{content:"";height:1px;flex:1;background:#edf1f5}
+.google{width:100%;height:47px;border:1px solid #e2eaf2;border-radius:12px;background:#fff;color:#344b61;font-weight:700;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:.2s}
+.google:hover{background:#f8fbff;border-color:#cbdceb}
+.google svg{width:18px;height:18px}
+.create{text-align:center;font-size:12px;color:#8495a5;margin:16px 0 0}
+.help{text-align:center;color:#8495a5;font-size:12px;line-height:1.7;margin:14px 0 0}
+@keyframes enter{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes bob{0%,100%{translate:0 0}50%{translate:0 -10px}}
+@keyframes robotFloat{0%,100%{translate:0 0}50%{translate:0 -7px}}
+@keyframes robotClimb{0%{transform:translateY(180px) rotate(-12deg);opacity:0}45%{opacity:1;transform:translateY(35px) rotate(7deg)}72%{transform:translateY(-12px) rotate(-3deg)}100%{transform:translateY(0) rotate(0);opacity:1}}
+.robot.float-after-intro{animation:robotFloat 3.4s ease-in-out infinite}
+@keyframes robotShake{0%,100%{translate:0 0}20%{translate:-9px 0}40%{translate:8px 0}60%{translate:-6px 0}80%{translate:5px 0}}
+@keyframes headShake{0%,100%{rotate:0}25%{rotate:-12deg}50%{rotate:12deg}75%{rotate:-8deg}}
+@keyframes wave{from{rotate:-128deg}to{rotate:-151deg}}
+@keyframes dim{from{opacity:0}to{opacity:1}}
+@media(max-width:760px){body{padding:14px}.shell{max-width:470px;min-height:auto;grid-template-columns:1fr;border-radius:23px}.welcome{display:none}.form-panel{padding:28px 27px 34px}.mobile-brand{display:flex;align-items:center;gap:9px;margin-bottom:18px;color:var(--blue);font-size:20px;font-weight:800}.mobile-brand .mark{background:var(--blue);color:white;border:0}.heading h2{font-size:27px}.language-row{margin-bottom:14px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+.robot.celebrate {animation:robotJump 0.8s ease-in-out;}
+@keyframes robotJump {0%{transform:translateY(0)rotate(0);}20%{transform:translateY(-25px)rotate(-5deg);}45%{transform:translateY(-65px)rotate(5deg);}65%{transform:translateY(-65px)rotate(-5deg);}85%{transform:translateY(5px)rotate(3deg);}100%{transform:translateY(0)rotate(0);}}
+.robot.celebrate .arm.left{animation:leftArmUp 0.8s ease-in-out forwards;rotate:18deg;}
+.robot.celebrate .arm.right{animation:rightArmUp 0.8s ease-in-out forwards;}
+@keyframes leftArmUp{0%,100%{rotate:18deg;}30%,70%{rotate:160deg;}}
+@keyframes rightArmUp{0%,100%{rotate:-137deg;}30%,70%{rotate:-160deg;}}
+</style>
+</head>
+<body>
+<main class="shell">
+  <section class="welcome" aria-label="Welcome to ServiQo">
+    <a class="brand" href="#" aria-label="ServiQo home">
+      <span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="m8 9 1.5 1.5L12 8M14 9h3M8 15l1.5 1.5L12 14M14 15h3"/></svg></span>ServiQo
+    </a>
+    <div class="copy">
+      <div class="eyebrow">
+        <span class="dot"></span>
+        <span data-i18n="eyebrow">SERVICE MADE SIMPLER</span>
+      </div>    
+      <h1 data-i18n="heroTitle">Good to see you 
+        <span style="color:#ffe39a">again!</span>
+      </h1>
+      <p data-i18n="heroText">Keep your services in check, follow every update, and get the help you need — all in one place.</p>
+      <div class="robot-stage" aria-hidden="true">
+        <div class="bubble b1">✦</div>
+        <div class="bubble b2">✓</div>
+        <div class="bubble b3">♡</div>
+        <div class="robot-shadow"></div>
+        <div class="robot" id="robot">
+          <div class="ear left"></div>
+          <div class="ear right"></div>
+          <div class="robot-head">
+            <div class="face">
+              <span class="eye"></span>
+              <span class="eye"></span>
+            </div>
+            <span class="cheek left"></span>
+            <span class="cheek right"></span>
+            <span class="mouth"></span></div>
+          <div class="arm left">
+            <span class="hand"></span>
+          </div>
+          <div class="arm right">
+            <span class="hand"></span>
+          </div>
+          <div class="robot-body">
+            <div class="robot-panel">✓</div>
+          </div>
+          <div class="leg left"></div>
+          <div class="leg right"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="form-panel">
+    <div class="form">
+      <a class="mobile-brand" href="#">
+        <span class="mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="3" width="16" height="18" rx="3"/>
+            <path d="m8 9 1.5 1.5L12 8M14 9h3M8 15l1.5 1.5L12 14M14 15h3"/>
+          </svg>
+        </span>ServiQo</a>
+      <div class="language-row">
+        <div class="language-switch" aria-label="Language">
+          <button type="button" class="active" data-lang="en">EN</button>
+          <button type="button" data-lang="id">ID</button>
+        </div>
+      </div>
+      <div class="heading">
+        <h2 data-i18n="heading">Welcome back 👋</h2>
+        <p data-i18n="subheading">Enter your details below to access your customer account.</p>
+      </div>
+      <form id="loginForm">
+        <div class="field">
+          <label for="email" data-i18n="emailLabel">Email address</label>
+          <div class="inputwrap">
+            <input id="email" type="email" placeholder="you@example.com" autocomplete="username" required>
+            <span class="suffix">✉</span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="password" data-i18n="passwordLabel">Password</label>
+          <div class="inputwrap">
+            <input id="password" type="password" placeholder="Enter your password" autocomplete="current-password" required>
+            <button class="toggle" id="togglePassword" type="button" aria-pressed="false">SHOW</button>
+          </div>
+        </div>
+        <div class="options">
+          <label class="remember">
+            <input type="checkbox">
+            <span data-i18n="remember">Remember me</span>
+          </label>
+          <a class="link" href="#" id="forgot" data-i18n="forgot">Forgot password?</a>
+        </div>
+        <button class="submit" type="submit" data-i18n="signIn">Sign in to ServiQo&nbsp; →</button>
+        <p class="message" id="message" role="status" aria-live="polite"></p>
+      </form>
+      <div class="divider" data-i18n="or">OR CONTINUE WITH</div>
+      <button class="google" id="googleLogin" type="button">
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.76 7.18l7.73 6C44.42 37.97 46.98 31.86 46.98 24.55z"/>
+          <path fill="#FBBC05" d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.87.93 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.14 1.44-4.89 2.3-8.18 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+        <span data-i18n="google">Continue with Google</span>
+      </button>
+      <p class="create">
+        <span data-i18n="noAccount">Don't have an account?</span> 
+        <a class="link" href="#" id="createAccount" data-i18n="create">Create account</a>
+      </p>
+      <p class="help">
+        <span data-i18n="trouble">Having trouble signing in?</span>
+        <br>
+        <a class="link" href="mailto:support@serviqo.example" data-i18n="support">Contact customer support</a>
+      </p>
+    </div>
+  </section>
+</main>
+<script>
+const password = document.getElementById("password");
+const toggle = document.getElementById("togglePassword");
+const robot = document.getElementById("robot");
+const message = document.getElementById("message");
+const robotStage = document.querySelector(".robot-stage");
+let pointerX = 0, pointerY = 0;
+let shakeTimer;
+
+const translations = {
+  en: {
+    eyebrow:"SERVICE MADE SIMPLER", heroTitle:'Good to see you <span style="color:#ffe39a">again!</span>',
+    heroText:"Keep your services in check, follow every update, and get the help you need — all in one place.",
+    heading:"Welcome back 👋", subheading:"Enter your details below to access your customer account.",
+    emailLabel:"Email address", passwordLabel:"Password", remember:"Remember me", forgot:"Forgot password?",
+    signIn:"Sign in to ServiQo&nbsp; →", or:"OR CONTINUE WITH", google:"Continue with Google",
+    noAccount:"Don't have an account?", create:"Create account", trouble:"Having trouble signing in?", support:"Contact customer support",
+    show:"SHOW", hide:"HIDE", passwordPlaceholder:"Enter your password",
+    demo:"Demo only",
+    reset:"Password reset Functioning",
+    googleDemo:"Google sign-in Functioning",
+    createDemo:"Account creation Functioning"
+  },
+  id: {
+    eyebrow:"LAYANAN JADI LEBIH MUDAH", heroTitle:'Senang melihatmu <span style="color:#ffe39a">kembali!</span>',
+    heroText:"Kelola layanan, pantau setiap pembaruan, dan dapatkan bantuan yang kamu butuhkan — semuanya di satu tempat.",
+    heading:"Selamat datang kembali 👋", subheading:"Masukkan detail akun untuk mengakses akun pelangganmu.",
+    emailLabel:"Alamat email", passwordLabel:"Kata sandi", remember:"Ingat saya", forgot:"Lupa kata sandi?",
+    signIn:"Masuk ke ServiQo&nbsp; →", or:"ATAU LANJUTKAN DENGAN", google:"Lanjutkan dengan Google",
+    noAccount:"Belum punya akun?", create:"Buat akun", trouble:"Kesulitan untuk masuk?", support:"Hubungi dukungan pelanggan",
+    show:"LIHAT", hide:"SEMBUNYIKAN", passwordPlaceholder:"Masukkan kata sandi",
+    demo:"Ini hanya demo",
+    reset:"Reset Kata Sandi Fungsi",
+    googleDemo:"Login Google Fungsi",
+    createDemo:"Pembuatan akun Fungsi"
+  }
+};
+let currentLang = "en";
+
+function setMessage(text, color = "#bd4d5c") {
+  message.style.color = color;
+  message.textContent = text;
+}
+function setPeek(show) {
+  password.type = show ? "text" : "password";
+  toggle.textContent = show ? translations[currentLang].hide : translations[currentLang].show;
+  toggle.setAttribute("aria-pressed", String(show));
+  document.body.classList.toggle("peek-mode", show);
+  robot.classList.toggle("peek", show);
+  robot.classList.toggle("curious", !show);
+  if (show) { robot.style.setProperty("--look-x", "0px"); robot.style.setProperty("--look-y", "0px"); }
+  else { robot.style.setProperty("--look-x", `${pointerX}px`); robot.style.setProperty("--look-y", `${pointerY}px`); }
+}
+toggle.addEventListener("click", () => setPeek(password.type === "password"));
+
+// Curious gaze follows the pointer while the password is hidden
+robot.classList.add("curious");
+window.addEventListener("pointermove", event => {
+  if (password.type === "text") return;
+  const rect = robotStage.getBoundingClientRect();
+  // Find the center of the robot
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+  // Calculate pointer distance from the robot's center
+  const dx = (event.clientX - centerX) / (rect.width / 2);
+  const dy = (event.clientY - centerY) / (rect.height / 2);
+  // Limit eye movement
+  const px = Math.max(-4, Math.min(4, dx * 4));
+  const py = Math.max(-3, Math.min(3, dy * 3));
+  // Move the pupils
+  robot.querySelectorAll(".eye").forEach(eye => {
+    eye.style.setProperty("--pupil-x", `${px}px`);
+    eye.style.setProperty("--pupil-y", `${py}px`);
+  });
+  pointerX = px; pointerY = py;
+  const lookX = Math.max(-2, Math.min(2, dx * 2));
+  const lookY = Math.max(-1.5, Math.min(1.5, dy * 1.5));
+
+  robot.style.setProperty("--look-x", `${lookX}px`);
+  robot.style.setProperty("--look-y", `${lookY}px`);
+});
+window.addEventListener("pointerleave", () => {
+  pointerX = pointerY = 0;
+  robot.querySelectorAll(".eye").forEach(eye => {
+    eye.style.setProperty("--pupil-x", "0px");
+    eye.style.setProperty("--pupil-y", "0px");
+  });
+  robot.style.setProperty("--look-x", "0px");
+  robot.style.setProperty("--look-y", "0px");
+});
+
+/* Demo-only login: until real auth is connected, submissions are treated as invalid. */
+function incorrectPasswordReaction() {
+  robot.classList.remove("shake");
+  void robot.offsetWidth;
+  robot.classList.add("shake");
+  clearTimeout(shakeTimer);
+  shakeTimer = setTimeout(() => robot.classList.remove("shake"), 520);
+}
+
+document.querySelectorAll("[data-lang]").forEach(button => {
+  button.addEventListener("click", () => {
+    currentLang = button.dataset.lang;
+    document.documentElement.lang = currentLang;
+    document.querySelectorAll("[data-lang]").forEach(item => item.classList.toggle("active", item === button));
+    document.querySelectorAll("[data-i18n]").forEach(element => {
+      const key = element.dataset.i18n;
+      element.innerHTML = translations[currentLang][key];
+    });
+    password.placeholder = translations[currentLang].passwordPlaceholder;
+    setPeek(password.type === "text");
+    setMessage("");
+  });
+});
+
+document.getElementById("loginForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const email = document.getElementById("email").value.trim();
+  const passwordValue = password.value;
+  // Demo credentials
+  const demoEmail = "andi@email.com";
+  const demoPassword = "andi1234";
+  if (email === demoEmail && passwordValue === demoPassword) {
+    // Login successful
+    setMessage("Login successful! Redirecting...", "#16835f");
+    robot.classList.add("celebrate");
+    setTimeout(() => {
+    window.location.href = "dashboard_customer.html";
+  }, 1000);
+  } else {
+    // Login failed
+    setMessage(
+      currentLang === "id"
+        ? "Email atau kata sandi salah."
+        : "Invalid email or password."
+    );
+    incorrectPasswordReaction();
+  }
+});
+document.getElementById("forgot").addEventListener("click", event => {
+  event.preventDefault();
+  setMessage(translations[currentLang].reset);
+});
+document.getElementById("googleLogin").addEventListener("click", () => {
+  setMessage(translations[currentLang].googleDemo, "#16835f");
+});
+document.getElementById("createAccount").addEventListener("click", event => {
+  event.preventDefault();
+  setMessage(translations[currentLang].createDemo, "#16835f");
+});
+</script>
+</body>
+</html>
