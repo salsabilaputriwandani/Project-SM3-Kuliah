@@ -194,13 +194,20 @@
             background-color: #376bb5;
         }
 
-        /* TABLE STYLING */
+        /* TABLE STYLING DENGAN SCROLL */
         .table-container {
             background-color: #FFFFFF;
             border: 2px solid #000;
             border-radius: 8px;
-            overflow: hidden;
+            overflow-y: auto; /* Mengaktifkan scroll vertikal */
+            max-height: 400px; /* Batas tinggi tabel */
         }
+
+        /* Modifikasi Scrollbar pada Tabel */
+        .table-container::-webkit-scrollbar { width: 8px; }
+        .table-container::-webkit-scrollbar-track { background: #f1f1f1; }
+        .table-container::-webkit-scrollbar-thumb { background: #8BB9F9; border-radius: 4px; }
+        .table-container::-webkit-scrollbar-thumb:hover { background: #4A89DE; }
 
         table {
             width: 100%;
@@ -218,6 +225,10 @@
         th {
             background-color: #BCD9FB;
             font-weight: 700;
+            position: sticky; /* Sticky header */
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 0 #000; /* Pertegas batas header saat scroll */
         }
 
         tr:nth-child(even) td { background-color: #EEEEEE; }
@@ -440,6 +451,52 @@
                             <td>28 Agu 2026</td>
                             <td>Diagnosis</td>
                         </tr>
+                        <!-- Baris tambahan agar efek scroll langsung terlihat -->
+                        <tr>
+                            <td>#1022</td>
+                            <td>PC Rakitan</td>
+                            <td>Power Supply 550W</td>
+                            <td>1</td>
+                            <td>Rizky</td>
+                            <td>25 Agu 2026</td>
+                            <td>Disetujui</td>
+                        </tr>
+                        <tr>
+                            <td>#1021</td>
+                            <td>MacBook Pro</td>
+                            <td>Baterai</td>
+                            <td>1</td>
+                            <td>Dimas</td>
+                            <td>21 Agu 2026</td>
+                            <td>Menunggu persetujuan</td>
+                        </tr>
+                        <tr>
+                            <td>#1020</td>
+                            <td>Laptop MSI</td>
+                            <td>Thermal Paste</td>
+                            <td>2</td>
+                            <td>Raka</td>
+                            <td>18 Agu 2026</td>
+                            <td>Disetujui</td>
+                        </tr>
+                        <tr>
+                            <td>#1019</td>
+                            <td>Laptop Dell</td>
+                            <td>RAM 8GB DDR4</td>
+                            <td>2</td>
+                            <td>Rizky</td>
+                            <td>15 Agu 2026</td>
+                            <td>Dalam pengiriman</td>
+                        </tr>
+                        <tr>
+                            <td>#1018</td>
+                            <td>Laptop ASUS</td>
+                            <td>SSD 1TB NVMe</td>
+                            <td>1</td>
+                            <td>Dimas</td>
+                            <td>12 Agu 2026</td>
+                            <td>Selesai</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -452,7 +509,7 @@
         <div class="modal-card">
             <div class="modal-header">
                 <h2>Tambah Permintaan Suku Cadang</h2>
-                <button class="btn-close-modal" id="btnCloseModal">&times;</button>
+                <button class="btn-close-modal" id="btnCloseModal">×</button>
             </div>
             <form id="requestForm">
                 <div class="form-group">
