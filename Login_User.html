@@ -71,6 +71,7 @@ body.peek-mode #password{background:#fff;color:#102f4d;border:2px solid #4da3e8;
 .field{margin-bottom:17px}
 .field label{display:block;margin-bottom:9px;font-size:13px;font-weight:700;color:#344b61}
 .inputwrap{position:relative}
+/* Tipe input diubah jadi text untuk membolehkan input username tanpa @ */
 .inputwrap input{width:100%;height:49px;padding:0 58px 0 15px;border:1px solid #e5edf5;border-radius:12px;outline:none;background:#fbfdff;color:var(--ink);transition:.2s}
 .inputwrap input::placeholder{color:#aab7c5}
 .inputwrap input:focus{border-color:#5b9cda;background:white;box-shadow:0 0 0 4px #2878c81c}
@@ -180,9 +181,10 @@ a.link{color:var(--blue);text-decoration:none;font-weight:700}
       </div>
       <form id="loginForm">
         <div class="field">
-          <label for="email" data-i18n="emailLabel">Email address</label>
+          <!-- Tipe input diubah jadi text untuk membolehkan input username tanpa @ -->
+          <label for="email" data-i18n="emailLabel">Email address / Username</label>
           <div class="inputwrap">
-            <input id="email" type="email" placeholder="you@example.com" autocomplete="username" required>
+            <input id="email" type="text" placeholder="customer@serviqo.com" autocomplete="username" required>
             <span class="suffix">✉</span>
           </div>
         </div>
@@ -200,7 +202,7 @@ a.link{color:var(--blue);text-decoration:none;font-weight:700}
           </label>
           <a class="link" href="#" id="forgot" data-i18n="forgot">Forgot password?</a>
         </div>
-        <button class="submit" type="submit" data-i18n="signIn">Sign in to ServiQo&nbsp; →</button>
+        <button class="submit" type="submit" data-i18n="signIn">Sign in to ServiQo  →</button>
         <p class="message" id="message" role="status" aria-live="polite"></p>
       </form>
       <div class="divider" data-i18n="or">OR CONTINUE WITH</div>
@@ -220,7 +222,7 @@ a.link{color:var(--blue);text-decoration:none;font-weight:700}
       <p class="help">
         <span data-i18n="trouble">Having trouble signing in?</span>
         <br>
-        <a class="link" href="mailto:support@serviqo.example" data-i18n="support">Contact customer support</a>
+        <a class="link" href="mailto:support@serviqo.com" data-i18n="support">Contact customer support</a>
       </p>
     </div>
   </section>
@@ -239,8 +241,8 @@ const translations = {
     eyebrow:"SERVICE MADE SIMPLER", heroTitle:'Good to see you <span style="color:#ffe39a">again!</span>',
     heroText:"Keep your services in check, follow every update, and get the help you need — all in one place.",
     heading:"Welcome back 👋", subheading:"Enter your details below to access your customer account.",
-    emailLabel:"Email address", passwordLabel:"Password", remember:"Remember me", forgot:"Forgot password?",
-    signIn:"Sign in to ServiQo&nbsp; →", or:"OR CONTINUE WITH", google:"Continue with Google",
+    emailLabel:"Email address / Username", passwordLabel:"Password", remember:"Remember me", forgot:"Forgot password?",
+    signIn:"Sign in to ServiQo  →", or:"OR CONTINUE WITH", google:"Continue with Google",
     noAccount:"Don't have an account?", create:"Create account", trouble:"Having trouble signing in?", support:"Contact customer support",
     show:"SHOW", hide:"HIDE", passwordPlaceholder:"Enter your password",
     demo:"Demo only",
@@ -252,8 +254,8 @@ const translations = {
     eyebrow:"LAYANAN JADI LEBIH MUDAH", heroTitle:'Senang melihatmu <span style="color:#ffe39a">kembali!</span>',
     heroText:"Kelola layanan, pantau setiap pembaruan, dan dapatkan bantuan yang kamu butuhkan — semuanya di satu tempat.",
     heading:"Selamat datang kembali 👋", subheading:"Masukkan detail akun untuk mengakses akun pelangganmu.",
-    emailLabel:"Alamat email", passwordLabel:"Kata sandi", remember:"Ingat saya", forgot:"Lupa kata sandi?",
-    signIn:"Masuk ke ServiQo&nbsp; →", or:"ATAU LANJUTKAN DENGAN", google:"Lanjutkan dengan Google",
+    emailLabel:"Email / Username", passwordLabel:"Kata sandi", remember:"Ingat saya", forgot:"Lupa kata sandi?",
+    signIn:"Masuk ke ServiQo  →", or:"ATAU LANJUTKAN DENGAN", google:"Lanjutkan dengan Google",
     noAccount:"Belum punya akun?", create:"Buat akun", trouble:"Kesulitan untuk masuk?", support:"Hubungi dukungan pelanggan",
     show:"LIHAT", hide:"SEMBUNYIKAN", passwordPlaceholder:"Masukkan kata sandi",
     demo:"Ini hanya demo",
@@ -316,7 +318,6 @@ window.addEventListener("pointerleave", () => {
   robot.style.setProperty("--look-y", "0px");
 });
 
-/* Demo-only login: until real auth is connected, submissions are treated as invalid. */
 function incorrectPasswordReaction() {
   robot.classList.remove("shake");
   void robot.offsetWidth;
@@ -340,14 +341,13 @@ document.querySelectorAll("[data-lang]").forEach(button => {
   });
 });
 
+// Arahkan sesuai permintaan login customer
 document.getElementById("loginForm").addEventListener("submit", event => {
   event.preventDefault();
   const email = document.getElementById("email").value.trim();
   const passwordValue = password.value;
-  // Demo credentials
-  const demoEmail = "andi@email.com";
-  const demoPassword = "andi1234";
-  if (email === demoEmail && passwordValue === demoPassword) {
+  
+  if ((email === "customer@serviqo.com" || email === "customerserviqo") && passwordValue === "customer123") {
     // Login successful
     setMessage("Login successful! Redirecting...", "#16835f");
     robot.classList.add("celebrate");
@@ -358,22 +358,28 @@ document.getElementById("loginForm").addEventListener("submit", event => {
     // Login failed
     setMessage(
       currentLang === "id"
-        ? "Email atau kata sandi salah."
-        : "Invalid email or password."
+        ? "Email/Username atau kata sandi salah."
+        : "Invalid email/username or password."
     );
     incorrectPasswordReaction();
   }
 });
+
+// Arahkan tombol Lupa Password
 document.getElementById("forgot").addEventListener("click", event => {
   event.preventDefault();
-  setMessage(translations[currentLang].reset);
+  window.location.href = "lupa_password.html";
 });
+
+// Arahkan tombol Google ke halaman otentikasi/login Google
 document.getElementById("googleLogin").addEventListener("click", () => {
-  setMessage(translations[currentLang].googleDemo, "#16835f");
+  window.location.href = "https://accounts.google.com/signin";
 });
+
+// Arahkan tombol Buat Akun
 document.getElementById("createAccount").addEventListener("click", event => {
   event.preventDefault();
-  setMessage(translations[currentLang].createDemo, "#16835f");
+  window.location.href = "register.html";
 });
 </script>
 </body>
