@@ -237,13 +237,20 @@
             background-color: #8C9EA8;
         }
 
-        /* TABLE STYLING */
+        /* --- TABLE SCROLLING AREA --- */
         .table-container {
             background-color: #FFFFFF;
             border: 2px solid #000;
             border-radius: 8px;
-            overflow: hidden;
+            overflow-y: auto; /* Mengaktifkan scroll vertikal */
+            max-height: 400px; /* Batas tinggi tabel */
         }
+
+        /* Modifikasi Scrollbar pada Tabel */
+        .table-container::-webkit-scrollbar { width: 8px; }
+        .table-container::-webkit-scrollbar-track { background: #f1f1f1; }
+        .table-container::-webkit-scrollbar-thumb { background: #8BB9F9; border-radius: 4px; }
+        .table-container::-webkit-scrollbar-thumb:hover { background: #4A89DE; }
 
         table {
             width: 100%;
@@ -261,6 +268,10 @@
         th {
             background-color: #BCD9FB;
             font-weight: 700;
+            position: sticky; /* Sticky header */
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 0 #000; /* Pertegas batas header saat scroll */
         }
 
         tr:nth-child(even) td { background-color: #EEEEEE; }
@@ -369,7 +380,7 @@
                         </tr>
                         <tr data-date="2026-06-07">
                             <td>#1016</td>
-                            <td>7 Juni 2026</td>
+                            <td>7 Jun 2026</td>
                             <td>Laptop ACER</td>
                             <td>Ganti RAM 8 GB</td>
                             <td>Selesai</td>
@@ -386,6 +397,42 @@
                             <td>21 Mei 2026</td>
                             <td>Laptop HP</td>
                             <td>Ganti Keyboard</td>
+                            <td>Selesai</td>
+                        </tr>
+                        <!-- Baris tambahan agar efek scroll langsung terlihat -->
+                        <tr data-date="2026-05-18">
+                            <td>#1011</td>
+                            <td>18 Mei 2026</td>
+                            <td>MacBook</td>
+                            <td>Ganti Layar</td>
+                            <td>Selesai</td>
+                        </tr>
+                        <tr data-date="2026-05-10">
+                            <td>#1009</td>
+                            <td>10 Mei 2026</td>
+                            <td>Laptop Lenovo</td>
+                            <td>Ganti Baterai</td>
+                            <td>Selesai</td>
+                        </tr>
+                        <tr data-date="2026-05-02">
+                            <td>#1005</td>
+                            <td>2 Mei 2026</td>
+                            <td>MacBook Pro</td>
+                            <td>Ganti SSD 1TB</td>
+                            <td>Selesai</td>
+                        </tr>
+                        <tr data-date="2026-04-28">
+                            <td>#1004</td>
+                            <td>28 Apr 2026</td>
+                            <td>Laptop Dell</td>
+                            <td>Perbaikan Engsel Patah</td>
+                            <td>Selesai</td>
+                        </tr>
+                        <tr data-date="2026-04-15">
+                            <td>#1001</td>
+                            <td>15 Apr 2026</td>
+                            <td>Laptop ASUS</td>
+                            <td>Install Ulang Windows 11</td>
                             <td>Selesai</td>
                         </tr>
                     </tbody>
