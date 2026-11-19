@@ -438,36 +438,36 @@
                         <tr>
                             <td>2.</td>
                             <td>SC-002</td>
-                            <td>Layar Laptop ThinkPad</td>
+                            <td>Layar LCD Lenovo ThinkPad</td>
                             <td>Layar</td>
                             <td>12</td>
                         </tr>
                         <tr>
                             <td>3.</td>
                             <td>SC-003</td>
-                            <td>Konektor Charger</td>
-                            <td>Konektor</td>
-                            <td>0</td>
+                            <td>Baterai MacBook Air M1</td>
+                            <td>Baterai</td>
+                            <td>5</td>
                         </tr>
                         <tr>
                             <td>4.</td>
                             <td>SC-004</td>
-                            <td>Keyboard MacBook Air</td>
-                            <td>Keyboard</td>
-                            <td>5</td>
+                            <td>Engsel Layar Acer Aspire</td>
+                            <td>Engsel</td>
+                            <td>8</td>
                         </tr>
                         <tr>
                             <td>5.</td>
                             <td>SC-005</td>
-                            <td>RAM Laptop 8GB</td>
+                            <td>RAM SODIMM 8GB DDR4</td>
                             <td>RAM</td>
-                            <td>2</td>
+                            <td>15</td>
                         </tr>
                         <tr>
                             <td>6.</td>
                             <td>SC-006</td>
-                            <td>RAM 16 GB</td>
-                            <td>RAM</td>
+                            <td>SSD M.2 NVMe 512GB</td>
+                            <td>Penyimpanan</td>
                             <td>7</td>
                         </tr>
                     </tbody>
@@ -476,10 +476,10 @@
 
             <!-- PAGINATION -->
             <div class="pagination-container">
-                <a href="#" class="page-btn">&lt;</a>
+                <a href="#" class="page-btn"><</a>
                 <a href="#" class="page-btn active">1</a>
                 <a href="#" class="page-btn">2</a>
-                <a href="#" class="page-btn">&gt;</a>
+                <a href="#" class="page-btn">></a>
             </div>
 
         </div>
@@ -490,7 +490,7 @@
         <div class="modal-card">
             <div class="modal-header">
                 <h2>Tambah Suku Cadang</h2>
-                <button class="close-modal" id="closeModalBtn">&times;</button>
+                <button class="close-modal" id="closeModalBtn">×</button>
             </div>
             <form id="addPartsForm">
                 <div class="form-group">
@@ -499,7 +499,7 @@
                 </div>
                 <div class="form-group">
                     <label>Nama Suku Cadang</label>
-                    <input type="text" id="partName" placeholder="Contoh: Baterai Samsung S22" required>
+                    <input type="text" id="partName" placeholder="Contoh: Baterai Laptop Thinkpad" required>
                 </div>
                 <div class="form-group">
                     <label>Kategori</label>
@@ -572,6 +572,77 @@
 
             tableBody.appendChild(newRow);
             closeModal();
+        });
+
+        // 3. Fitur Paginasi Dummy (Pindah Halaman 1 & 2)
+        const pageBtns = document.querySelectorAll('.page-btn');
+        const prevBtn = pageBtns[0]; 
+        const page1Btn = pageBtns[1]; 
+        const page2Btn = pageBtns[2]; 
+        const nextBtn = pageBtns[3]; 
+
+        let currentPage = 1;
+
+        // Data untuk halaman 1 
+        const dataPage1 = [
+            { no: '1.', code: 'SC-001', name: 'Keyboard Laptop ASUS', category: 'Keyboard', stock: '10' },
+            { no: '2.', code: 'SC-002', name: 'Layar LCD Lenovo ThinkPad', category: 'Layar', stock: '12' },
+            { no: '3.', code: 'SC-003', name: 'Baterai MacBook Air M1', category: 'Baterai', stock: '5' },
+            { no: '4.', code: 'SC-004', name: 'Engsel Layar Acer Aspire', category: 'Engsel', stock: '8' },
+            { no: '5.', code: 'SC-005', name: 'RAM SODIMM 8GB DDR4', category: 'RAM', stock: '15' },
+            { no: '6.', code: 'SC-006', name: 'SSD M.2 NVMe 512GB', category: 'Penyimpanan', stock: '7' }
+        ];
+
+        // Data dummy untuk halaman 2
+        const dataPage2 = [
+            { no: '7.', code: 'SC-007', name: 'Trackpad MacBook Pro', category: 'Trackpad', stock: '3' },
+            { no: '8.', code: 'SC-008', name: 'Cooling Fan HP Pavilion', category: 'Kipas', stock: '6' }
+        ];
+
+        function renderTable(page) {
+            tableBody.innerHTML = ''; 
+            const dataToShow = page === 1 ? dataPage1 : dataPage2;
+            
+            dataToShow.forEach(data => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${data.no}</td>
+                    <td>${data.code}</td>
+                    <td>${data.name}</td>
+                    <td>${data.category}</td>
+                    <td>${data.stock}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            page1Btn.classList.toggle('active', page === 1);
+            page2Btn.classList.toggle('active', page === 2);
+        }
+
+        function changePage(page) {
+            if (page < 1 || page > 2) return; 
+            currentPage = page;
+            renderTable(currentPage);
+        }
+
+        prevBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            changePage(currentPage - 1);
+        });
+
+        nextBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            changePage(currentPage + 1);
+        });
+
+        page1Btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            changePage(1);
+        });
+
+        page2Btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            changePage(2);
         });
     </script>
 </body>
