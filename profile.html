@@ -327,6 +327,7 @@
         <a href="dashboard_customer.html" class="menu-item">Dashboard</a>
         <a href="buat_permintaan.html" class="menu-item">Buat Permintaan Service</a>
         <a href="tiket_saya.html" class="menu-item">Tiket Saya</a>
+        <a href="Produk&Layanan.html" class="menu-item">Produk & Layanan</a>
         <a href="riwayat_service.html" class="menu-item">Riwayat Service</a>
         <a href="chat.html" class="menu-item">Chat</a>
         <a href="profile.html" class="menu-item active">Profile</a>
@@ -406,7 +407,7 @@
                 </div>
 
                 <div class="align-right">
-                    <button class="btn-blue">Ubah Profil</button>
+                    <button class="btn-blue" id="btnSimpanProfil">Ubah Profil</button>
                 </div>
             </div>
         </div>
@@ -437,7 +438,7 @@
             </div>
 
             <div class="align-right">
-                <button class="btn-blue">Simpan</button>
+                <button class="btn-blue" id="btnSimpanPassword">Simpan</button>
             </div>
         </div>
 
@@ -487,6 +488,28 @@
                 iconSpan.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
             }
         }
+        
+        // --- Fitur Simpan Profil ---
+        const btnSimpanProfil = document.getElementById('btnSimpanProfil');
+        btnSimpanProfil.addEventListener('click', function() {
+            alert('Perubahan profil berhasil disimpan!');
+        });
+
+        // --- Fitur Simpan Password ---
+        const btnSimpanPassword = document.getElementById('btnSimpanPassword');
+        btnSimpanPassword.addEventListener('click', function() {
+            const passLama = document.getElementById('passLamaCust').value;
+            const passBaru = document.getElementById('passBaruCust').value;
+            
+            if (passLama === "" || passBaru === "") {
+                alert('Mohon isi password lama dan password baru!');
+            } else {
+                alert('Password berhasil diubah!');
+                // Reset input setelah berhasil
+                document.getElementById('passLamaCust').value = "";
+                document.getElementById('passBaruCust').value = "";
+            }
+        });
     </script>
 </body>
 </html>
