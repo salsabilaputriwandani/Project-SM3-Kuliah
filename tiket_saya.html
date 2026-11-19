@@ -411,6 +411,8 @@
             border: 2px solid #000;
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
         }
 
         .modal-header {
@@ -483,6 +485,30 @@
         }
         .btn-setuju:hover { background-color: #4DAA7A; }
 
+        /* Style untuk dropdown alasan tolak */
+        #formTolak {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed #ccc;
+        }
+
+        #formTolak label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        #alasanTolak {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
     </style>
 </head>
 <body>
@@ -496,6 +522,7 @@
         <a href="dashboard_customer.html" class="menu-item">Dashboard</a>
         <a href="buat_permintaan.html" class="menu-item">Buat Permintaan Service</a>
         <a href="tiket_saya.html" class="menu-item active">Tiket Saya</a>
+        <a href="Produk&Layanan.html" class="menu-item">Produk & Layanan</a>
         <a href="riwayat_service.html" class="menu-item">Riwayat Service</a>
         <a href="chat.html" class="menu-item">Chat</a>
         <a href="profile.html" class="menu-item">Profile</a>
@@ -538,7 +565,7 @@
         <div class="toolbar">
             <div class="search-box">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <input type="text" placeholder="Cari perangkat atau nomor tiket....">
+                <input type="text" id="searchInput" placeholder="Cari perangkat atau nomor tiket....">
             </div>
             
             <div class="filter-wrapper">
@@ -550,17 +577,17 @@
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </div>
                 <div class="filter-dropdown" id="filterDropdown">
-                    <div class="filter-item">Semua Status</div>
-                    <div class="filter-item">Dalam perbaikan</div>
-                    <div class="filter-item">Menunggu persetujuan</div>
-                    <div class="filter-item">Diagnosis</div>
-                    <div class="filter-item">QC</div>
+                    <div class="filter-item" data-value="all">Semua Status</div>
+                    <div class="filter-item" data-value="Dalam perbaikan">Dalam perbaikan</div>
+                    <div class="filter-item" data-value="Menunggu persetujuan">Menunggu persetujuan</div>
+                    <div class="filter-item" data-value="Diagnosis">Diagnosis</div>
+                    <div class="filter-item" data-value="QC">QC</div>
                 </div>
             </div>
         </div>
 
         <div class="table-container">
-            <table>
+            <table id="ticketTable">
                 <thead>
                     <tr>
                         <th>No. Tiket</th>
@@ -571,66 +598,19 @@
                         <th>Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>#1023</td>
-                        <td>1 Okt 2026</td>
-                        <td>MacBook</td>
-                        <td>Layar berkedip</td>
-                        <td>
-                            <div class="status-badge badge-blue">
-                                <div class="status-dot"></div> Dalam perbaikan
-                            </div>
-                        </td>
-                        <td><a href="detail_tiket.html" class="btn-detail">Detail</a></td>
-                    </tr>
-                    <tr>
-                        <td>#1025</td>
-                        <td>20 Sept 2026</td>
-                        <td>Laptop Asus</td>
-                        <td>Overheat</td>
-                        <td>
-                            <div class="status-badge badge-yellow">
-                                <div class="status-dot"></div> Menunggu persetujuan
-                            </div>
-                        </td>
-                        <td><button onclick="bukaModalPersetujuan()" class="btn-detail" style="cursor: pointer;">Tinjau</button></td>
-                    </tr>
-                    <tr>
-                        <td>#1028</td>
-                        <td>5 Sept 2026</td>
-                        <td>Laptop ACER</td>
-                        <td>Ganti RAM 8 GB</td>
-                        <td>
-                            <div class="status-badge badge-blue">
-                                <div class="status-dot"></div> Diagnosis
-                            </div>
-                        </td>
-                        <td><a href="detail_tiket.html" class="btn-detail">Detail</a></td>
-                    </tr>
-                    <tr>
-                        <td>#1030</td>
-                        <td>12 Agt 2026</td>
-                        <td>MacBook</td>
-                        <td>Tidak bisa booting</td>
-                        <td>
-                            <div class="status-badge badge-green">
-                                <div class="status-dot"></div> QC
-                            </div>
-                        </td>
-                        <td><a href="detail_tiket.html" class="btn-detail">Detail</a></td>
-                    </tr>
+                <tbody id="ticketTableBody">
+                    <!-- Data akan di-render menggunakan JavaScript -->
                 </tbody>
             </table>
         </div>
 
         <div class="pagination">
-            <a href="#" class="page-item">
+            <a href="#" class="page-item" id="prevPageBtn">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
             </a>
-            <a href="#" class="page-item active">1</a>
-            <a href="#" class="page-item">2</a>
-            <a href="#" class="page-item">
+            <a href="#" class="page-item active" id="page1Btn">1</a>
+            <a href="#" class="page-item" id="page2Btn">2</a>
+            <a href="#" class="page-item" id="nextPageBtn">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
             </a>
         </div>
@@ -642,7 +622,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <span>Persetujuan Servis - Tiket #1025</span>
-                <span class="modal-close" onclick="tutupModalPersetujuan()">&times;</span>
+                <span class="modal-close" onclick="tutupModalPersetujuan()">×</span>
             </div>
             <div class="modal-body">
                 <div class="info-row">
@@ -669,16 +649,160 @@
                 <p style="margin-top: 15px; font-size: 13px; color: #666; font-style: italic;">
                     Apakah Anda menyetujui rincian diagnosis, penggantian suku cadang, serta estimasi biaya dan waktu di atas?
                 </p>
+
+                <!-- Form untuk alasan penolakan (disembunyikan secara default) -->
+                <div id="formTolak">
+                    <label for="alasanTolak">Pilih Alasan Penolakan:</label>
+                    <select id="alasanTolak">
+                        <option value="">-- Pilih Alasan --</option>
+                        <option value="Biaya terlalu mahal">Biaya terlalu mahal</option>
+                        <option value="Waktu pengerjaan terlalu lama">Waktu pengerjaan terlalu lama</option>
+                        <option value="Ingin ganti perangkat baru saja">Ingin ganti perangkat baru saja</option>
+                        <option value="Batal servis">Batal servis</option>
+                    </select>
+                </div>
+
             </div>
-            <div class="modal-footer">
-                <button class="btn-modal btn-tolak" onclick="tutupModalPersetujuan()">Tolak</button>
+            <div class="modal-footer" id="modalFooterDefault">
+                <button class="btn-modal btn-tolak" onclick="tampilkanFormTolak()">Tolak</button>
                 <button class="btn-modal btn-setuju" onclick="setujuiPekerjaan()">Setujui</button>
+            </div>
+            <!-- Footer khusus saat mode tolak aktif -->
+            <div class="modal-footer" id="modalFooterTolak" style="display: none;">
+                <button class="btn-modal" onclick="batalTolak()" style="background: #ccc; border: none;">Batal</button>
+                <button class="btn-modal btn-tolak" onclick="kirimPenolakan()">Kirim Penolakan</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Script Lonceng Notifikasi
+        // --- SCRIPT PENCARIAN & FILTER ---
+        const searchInput = document.getElementById('searchInput');
+        const filterBox = document.getElementById('filterBox');
+        const filterDropdown = document.getElementById('filterDropdown');
+        const filterText = document.getElementById('filterText');
+        const filterItems = document.querySelectorAll('.filter-item');
+        
+        let currentSearchQuery = "";
+        let currentFilterStatus = "all";
+
+        function filterTable() {
+            // Kita ambil row terbaru setelah tabel dirender oleh paginasi
+            const tableRows = document.querySelectorAll('#ticketTableBody tr');
+            tableRows.forEach(row => {
+                const noTiket = row.cells[0].textContent.toLowerCase();
+                const perangkat = row.cells[2].textContent.toLowerCase();
+                const rowStatus = row.cells[4].getAttribute('data-status');
+                
+                const matchesSearch = noTiket.includes(currentSearchQuery) || perangkat.includes(currentSearchQuery);
+                const matchesFilter = currentFilterStatus === "all" || rowStatus === currentFilterStatus;
+
+                if (matchesSearch && matchesFilter) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                currentSearchQuery = e.target.value.toLowerCase();
+                filterTable();
+            });
+        }
+
+        if (filterBox && filterDropdown) {
+            filterBox.addEventListener('click', function(e) {
+                filterDropdown.classList.toggle('show');
+                e.stopPropagation(); 
+            });
+
+            filterItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const selectedText = this.innerText;
+                    currentFilterStatus = this.getAttribute('data-value');
+                    
+                    filterText.innerText = selectedText;
+                    filterDropdown.classList.remove('show');
+                    filterTable();
+                });
+            });
+
+            window.addEventListener('click', function(e) {
+                if (!filterBox.contains(e.target) && !filterDropdown.contains(e.target)) {
+                    filterDropdown.classList.remove('show');
+                }
+            });
+        }
+
+        // --- SCRIPT PAGINASI (DATA DUMMY HALAMAN 1 DAN 2) ---
+        const ticketTableBody = document.getElementById('ticketTableBody');
+        const page1Btn = document.getElementById('page1Btn');
+        const page2Btn = document.getElementById('page2Btn');
+        const prevPageBtn = document.getElementById('prevPageBtn');
+        const nextPageBtn = document.getElementById('nextPageBtn');
+        
+        let currentPage = 1;
+
+        // Data Dummy untuk Halaman 1
+        const dataPage1 = [
+            { id: '#1023', tgl: '1 Okt 2026', perangkat: 'MacBook', keluhan: 'Layar berkedip', status: 'Dalam perbaikan', badge: 'badge-blue', aksi: '<a href="detail_tiket.html" class="btn-detail">Detail</a>' },
+            { id: '#1025', tgl: '20 Sept 2026', perangkat: 'Laptop Asus', keluhan: 'Overheat', status: 'Menunggu persetujuan', badge: 'badge-yellow', aksi: '<button onclick="bukaModalPersetujuan()" class="btn-detail" style="cursor: pointer;">Tinjau</button>' },
+            { id: '#1028', tgl: '5 Sept 2026', perangkat: 'Laptop ACER', keluhan: 'Ganti RAM 8 GB', status: 'Diagnosis', badge: 'badge-blue', aksi: '<a href="detail_tiket.html" class="btn-detail">Detail</a>' },
+            { id: '#1030', tgl: '12 Agt 2026', perangkat: 'MacBook', keluhan: 'Tidak bisa booting', status: 'QC', badge: 'badge-green', aksi: '<a href="detail_tiket.html" class="btn-detail">Detail</a>' }
+        ];
+
+        // Data Dummy untuk Halaman 2
+        const dataPage2 = [
+            { id: '#1032', tgl: '10 Jul 2026', perangkat: 'Laptop Lenovo', keluhan: 'Keyboard mati sebagian', status: 'Dalam perbaikan', badge: 'badge-blue', aksi: '<a href="detail_tiket.html" class="btn-detail">Detail</a>' },
+            { id: '#1035', tgl: '15 Jun 2026', perangkat: 'Laptop HP', keluhan: 'Baterai bocor', status: 'Diagnosis', badge: 'badge-blue', aksi: '<a href="detail_tiket.html" class="btn-detail">Detail</a>' }
+        ];
+
+        function renderTable(page) {
+            ticketTableBody.innerHTML = '';
+            const dataToShow = page === 1 ? dataPage1 : dataPage2;
+            
+            dataToShow.forEach(data => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${data.id}</td>
+                    <td>${data.tgl}</td>
+                    <td>${data.perangkat}</td>
+                    <td>${data.keluhan}</td>
+                    <td data-status="${data.status}">
+                        <div class="status-badge ${data.badge}">
+                            <div class="status-dot"></div> ${data.status}
+                        </div>
+                    </td>
+                    <td>${data.aksi}</td>
+                `;
+                ticketTableBody.appendChild(tr);
+            });
+
+            // Update status tombol active
+            page1Btn.classList.toggle('active', page === 1);
+            page2Btn.classList.toggle('active', page === 2);
+
+            // Re-apply filter and search yang sedang berjalan untuk tabel yang baru di render
+            filterTable();
+        }
+
+        function changePage(page) {
+            if (page < 1 || page > 2) return;
+            currentPage = page;
+            renderTable(currentPage);
+        }
+
+        prevPageBtn.addEventListener('click', e => { e.preventDefault(); changePage(currentPage - 1); });
+        nextPageBtn.addEventListener('click', e => { e.preventDefault(); changePage(currentPage + 1); });
+        page1Btn.addEventListener('click', e => { e.preventDefault(); changePage(1); });
+        page2Btn.addEventListener('click', e => { e.preventDefault(); changePage(2); });
+        
+        // Render tabel pertama kali saat diload
+        renderTable(1);
+
+        // --- SCRIPT LONCENG NOTIFIKASI ---
         const bellIcon = document.getElementById('bellIcon');
         const notifDropdown = document.getElementById('notifDropdown');
 
@@ -695,49 +819,49 @@
             });
         }
 
-        // Script Filter Dropdown
-        const filterBox = document.getElementById('filterBox');
-        const filterDropdown = document.getElementById('filterDropdown');
-        const filterText = document.getElementById('filterText');
-        const filterItems = document.querySelectorAll('.filter-item');
-
-        if (filterBox && filterDropdown) {
-            filterBox.addEventListener('click', function(e) {
-                filterDropdown.classList.toggle('show');
-                e.stopPropagation(); 
-            });
-
-            filterItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    filterText.innerText = this.innerText;
-                    filterDropdown.classList.remove('show');
-                });
-            });
-
-            window.addEventListener('click', function(e) {
-                if (!filterBox.contains(e.target) && !filterDropdown.contains(e.target)) {
-                    filterDropdown.classList.remove('show');
-                }
-            });
-        }
-
-        // --- TAMBAHAN JAVASCRIPT UNTUK MODAL ---
+        // --- SCRIPT MODAL PERSETUJUAN & PENOLAKAN ---
         const modalPersetujuan = document.getElementById('modalPersetujuan');
+        const formTolak = document.getElementById('formTolak');
+        const alasanTolak = document.getElementById('alasanTolak');
+        const modalFooterDefault = document.getElementById('modalFooterDefault');
+        const modalFooterTolak = document.getElementById('modalFooterTolak');
 
         function bukaModalPersetujuan() {
             modalPersetujuan.classList.add('show');
-            // Menutup notifikasi dropdown jika modal terbuka dari dalam dropdown
+            batalTolak(); // reset state form
             document.getElementById('notifDropdown').classList.remove('show');
         }
 
         function tutupModalPersetujuan() {
             modalPersetujuan.classList.remove('show');
+            batalTolak(); // reset state form
         }
 
         function setujuiPekerjaan() {
             alert('Persetujuan perbaikan dan biaya berhasil dikirim ke teknisi!');
             tutupModalPersetujuan();
-            // (Opsional) Refresh halaman atau ganti status tiket menjadi 'Disetujui' via backend di sini
+        }
+
+        function tampilkanFormTolak() {
+            formTolak.style.display = "block";
+            modalFooterDefault.style.display = "none";
+            modalFooterTolak.style.display = "flex";
+        }
+
+        function batalTolak() {
+            formTolak.style.display = "none";
+            alasanTolak.value = "";
+            modalFooterDefault.style.display = "flex";
+            modalFooterTolak.style.display = "none";
+        }
+
+        function kirimPenolakan() {
+            if (alasanTolak.value === "") {
+                alert("Silakan pilih alasan penolakan terlebih dahulu.");
+                return;
+            }
+            alert(`Penolakan servis berhasil dikirim dengan alasan:\n"${alasanTolak.value}"`);
+            tutupModalPersetujuan();
         }
 
         // Menutup modal jika area gelap (overlay) diklik
