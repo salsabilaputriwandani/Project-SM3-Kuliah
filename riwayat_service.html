@@ -388,6 +388,13 @@
             background-color: #D6E8FF;
         }
 
+        /* Disabled state for arrows */
+        .page-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
     </style>
 </head>
 <body>
@@ -401,6 +408,7 @@
         <a href="dashboard_customer.html" class="menu-item">Dashboard</a>
         <a href="buat_permintaan.html" class="menu-item">Buat Permintaan Service</a>
         <a href="tiket_saya.html" class="menu-item">Tiket Saya</a>
+        <a href="Produk&Layanan.html" class="menu-item">Produk & Layanan</a>
         <a href="riwayat_service.html" class="menu-item active">Riwayat Service</a>
         <a href="chat.html" class="menu-item">Chat</a>
         <a href="profile.html" class="menu-item">Profile</a>
@@ -438,7 +446,7 @@
         <div class="toolbar">
             <div class="search-box">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <input type="text" placeholder="Cari perangkat atau nomor tiket riwayat....">
+                <input type="text" id="searchInput" placeholder="Cari tiket, perangkat, keluhan, atau tanggal...">
             </div>
             
             <div class="filter-wrapper">
@@ -450,15 +458,15 @@
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </div>
                 <div class="filter-dropdown" id="filterDropdown">
-                    <div class="filter-item">Semua Status</div>
-                    <div class="filter-item">Selesai</div>
-                    <div class="filter-item">Dibatalkan</div>
+                    <div class="filter-item" data-value="all">Semua Status</div>
+                    <div class="filter-item" data-value="Selesai">Selesai</div>
+                    <div class="filter-item" data-value="Dibatalkan">Dibatalkan</div>
                 </div>
             </div>
         </div>
 
         <div class="table-container">
-            <table>
+            <table id="historyTable">
                 <thead>
                     <tr>
                         <th>No. Tiket</th>
@@ -470,38 +478,62 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    <tr class="table-row">
                         <td>#1001</td>
                         <td>15 Jul 2026</td>
                         <td>Laptop Thinkpad</td>
                         <td>Ganti RAM 8</td>
-                        <td>
+                        <td data-status="Selesai">
                             <div class="status-badge badge-green">
                                 <div class="status-dot"></div> Selesai
                             </div>
                         </td>
                         <td><a href="detail_riwayat.html" class="btn-detail">Detail</a></td>
                     </tr>
-                    <tr>
+                    <tr class="table-row">
                         <td>#0988</td>
                         <td>22 Jun 2026</td>
                         <td>MacBook Air M1</td>
                         <td>Pembersihan Trackpad</td>
-                        <td>
+                        <td data-status="Selesai">
                             <div class="status-badge badge-green">
                                 <div class="status-dot"></div> Selesai
                             </div>
                         </td>
                         <td><a href="detail_riwayat.html" class="btn-detail">Detail</a></td>
                     </tr>
-                    <tr>
+                    <tr class="table-row">
                         <td>#0950</td>
                         <td>10 Mei 2026</td>
                         <td>Laptop ACER 2021</td>
                         <td>Mati Total (Batal Servis)</td>
-                        <td>
+                        <td data-status="Dibatalkan">
                             <div class="status-badge badge-red">
                                 <div class="status-dot"></div> Dibatalkan
+                            </div>
+                        </td>
+                        <td><a href="detail_riwayat.html" class="btn-detail">Detail</a></td>
+                    </tr>
+                    <tr class="table-row">
+                        <td>#0912</td>
+                        <td>02 Apr 2026</td>
+                        <td>Asus ROG Strix</td>
+                        <td>Ganti Keyboard</td>
+                        <td data-status="Selesai">
+                            <div class="status-badge badge-green">
+                                <div class="status-dot"></div> Selesai
+                            </div>
+                        </td>
+                        <td><a href="detail_riwayat.html" class="btn-detail">Detail</a></td>
+                    </tr>
+                    <tr class="table-row">
+                        <td>#0899</td>
+                        <td>15 Mar 2026</td>
+                        <td>Lenovo IdeaPad</td>
+                        <td>Install Ulang Windows</td>
+                        <td data-status="Selesai">
+                            <div class="status-badge badge-green">
+                                <div class="status-dot"></div> Selesai
                             </div>
                         </td>
                         <td><a href="detail_riwayat.html" class="btn-detail">Detail</a></td>
@@ -510,20 +542,147 @@
             </table>
         </div>
 
-        <div class="pagination">
-            <a href="#" class="page-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-            </a>
-            <a href="#" class="page-item active">1</a>
-            <a href="#" class="page-item">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-            </a>
-        </div>
+        <!-- Container Pagination Dinamis -->
+        <div class="pagination" id="paginationContainer"></div>
 
     </div>
 
     <script>
-        // Script Lonceng Notifikasi
+        // --- SCRIPT PENCARIAN, FILTER & PAGINATION ---
+        const searchInput = document.getElementById('searchInput');
+        const filterBox = document.getElementById('filterBox');
+        const filterDropdown = document.getElementById('filterDropdown');
+        const filterText = document.getElementById('filterText');
+        const filterItems = document.querySelectorAll('.filter-item');
+        const tableRows = Array.from(document.querySelectorAll('#historyTable tbody tr'));
+        const paginationContainer = document.getElementById('paginationContainer');
+
+        let currentSearchQuery = "";
+        let currentFilterStatus = "all";
+        
+        // Konfigurasi Pagination
+        const rowsPerPage = 3; // Maksimal 3 baris yang tampil per halaman
+        let currentPage = 1;
+
+        function updateTable() {
+            // 1. Filter data berdasarkan input pencarian & status dropdown
+            const filteredRows = tableRows.filter(row => {
+                // Ambil seluruh teks di dalam baris (sehingga pencarian berlaku untuk semua kolom)
+                const rowText = row.textContent.toLowerCase();
+                const rowStatus = row.cells[4].getAttribute('data-status');
+                
+                const matchesSearch = rowText.includes(currentSearchQuery);
+                const matchesFilter = currentFilterStatus === "all" || rowStatus === currentFilterStatus;
+
+                return matchesSearch && matchesFilter;
+            });
+
+            // 2. Hitung total halaman berdasarkan data yang cocok
+            const totalPages = Math.ceil(filteredRows.length / rowsPerPage) || 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            // 3. Sembunyikan semua baris terlebih dahulu
+            tableRows.forEach(row => row.style.display = "none");
+
+            // 4. Tampilkan HANYA baris yang sesuai dengan halaman saat ini
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex = startIndex + rowsPerPage;
+            
+            filteredRows.slice(startIndex, endIndex).forEach(row => {
+                row.style.display = ""; // Munculkan baris
+            });
+
+            // 5. Render ulang tombol pagination
+            renderPaginationUI(totalPages);
+        }
+
+        function renderPaginationUI(totalPages) {
+            paginationContainer.innerHTML = '';
+
+            // Tombol Previous (Panah Kiri)
+            const prevBtn = document.createElement('a');
+            prevBtn.href = '#';
+            prevBtn.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+            prevBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>`;
+            prevBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (currentPage > 1) {
+                    currentPage--;
+                    updateTable();
+                }
+            });
+            paginationContainer.appendChild(prevBtn);
+
+            // Angka Halaman
+            for (let i = 1; i <= totalPages; i++) {
+                const pageBtn = document.createElement('a');
+                pageBtn.href = '#';
+                pageBtn.className = `page-item ${currentPage === i ? 'active' : ''}`;
+                pageBtn.innerText = i;
+                pageBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    currentPage = i;
+                    updateTable();
+                });
+                paginationContainer.appendChild(pageBtn);
+            }
+
+            // Tombol Next (Panah Kanan)
+            const nextBtn = document.createElement('a');
+            nextBtn.href = '#';
+            nextBtn.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+            nextBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
+            nextBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updateTable();
+                }
+            });
+            paginationContainer.appendChild(nextBtn);
+        }
+
+        // --- Event Listener Pencarian Cepat ---
+        if (searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                currentSearchQuery = e.target.value.toLowerCase();
+                currentPage = 1; // Saat mencari, langsung reset ke halaman 1
+                updateTable();
+            });
+        }
+
+        // --- Event Listener Filter Dropdown ---
+        if (filterBox && filterDropdown) {
+            filterBox.addEventListener('click', function(e) {
+                filterDropdown.classList.toggle('show');
+                e.stopPropagation(); 
+            });
+
+            filterItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const selectedText = this.innerText;
+                    currentFilterStatus = this.getAttribute('data-value');
+                    
+                    filterText.innerText = selectedText;
+                    filterDropdown.classList.remove('show');
+                    
+                    currentPage = 1; // Saat memfilter, reset ke halaman 1
+                    updateTable();
+                });
+            });
+
+            window.addEventListener('click', function(e) {
+                if (!filterBox.contains(e.target) && !filterDropdown.contains(e.target)) {
+                    filterDropdown.classList.remove('show');
+                }
+            });
+        }
+
+        // Panggil fungsi pertama kali saat halaman dimuat
+        updateTable();
+
+
+        // --- SCRIPT LONCENG NOTIFIKASI ---
         const bellIcon = document.getElementById('bellIcon');
         const notifDropdown = document.getElementById('notifDropdown');
 
@@ -536,32 +695,6 @@
             window.addEventListener('click', function(e) {
                 if (!notifDropdown.contains(e.target) && e.target !== bellIcon) {
                     notifDropdown.classList.remove('show');
-                }
-            });
-        }
-
-        // Script Filter Dropdown
-        const filterBox = document.getElementById('filterBox');
-        const filterDropdown = document.getElementById('filterDropdown');
-        const filterText = document.getElementById('filterText');
-        const filterItems = document.querySelectorAll('.filter-item');
-
-        if (filterBox && filterDropdown) {
-            filterBox.addEventListener('click', function(e) {
-                filterDropdown.classList.toggle('show');
-                e.stopPropagation(); 
-            });
-
-            filterItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    filterText.innerText = this.innerText;
-                    filterDropdown.classList.remove('show');
-                });
-            });
-
-            window.addEventListener('click', function(e) {
-                if (!filterBox.contains(e.target) && !filterDropdown.contains(e.target)) {
-                    filterDropdown.classList.remove('show');
                 }
             });
         }
