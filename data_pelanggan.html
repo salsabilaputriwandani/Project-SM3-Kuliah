@@ -471,10 +471,10 @@
 
         <!-- PAGINATION -->
         <div class="pagination-container">
-            <a href="#" class="page-btn">&lt;</a>
+            <a href="#" class="page-btn"><</a>
             <a href="#" class="page-btn active">1</a>
             <a href="#" class="page-btn">2</a>
-            <a href="#" class="page-btn">&gt;</a>
+            <a href="#" class="page-btn">></a>
         </div>
 
     </div>
@@ -484,7 +484,7 @@
         <div class="modal-card">
             <div class="modal-header">
                 <h2>Tambah Pelanggan Baru</h2>
-                <button class="close-modal" id="closeModalBtn">&times;</button>
+                <button class="close-modal" id="closeModalBtn">×</button>
             </div>
             <form id="addCustomerForm">
                 <div class="form-group">
@@ -586,6 +586,82 @@
 
             tableBody.appendChild(newRow);
             closeModal();
+        });
+
+        // 4. Fitur Paginasi Dummy (Pindah Halaman 1 & 2)
+        const pageBtns = document.querySelectorAll('.page-btn');
+        const prevBtn = pageBtns[0]; // Tombol <
+        const page1Btn = pageBtns[1]; // Tombol 1
+        const page2Btn = pageBtns[2]; // Tombol 2
+        const nextBtn = pageBtns[3]; // Tombol >
+
+        let currentPage = 1;
+
+        // Data untuk halaman 1 (Data asli)
+        const dataPage1 = [
+            { id: 'CUS001', name: 'Andi Pratama', phone: '082123251654', email: 'andi@gmail.com', tickets: '3', status: 'Aktif' },
+            { id: 'CUS002', name: 'Siti Aisyah', phone: '082487563424', email: 'siti@gmail.com', tickets: '2', status: 'Aktif' },
+            { id: 'CUS003', name: 'Budi Santoso', phone: '087623451287', email: 'budi@gmail.com', tickets: '4', status: 'Aktif' }
+        ];
+
+        // Data dummy untuk halaman 2
+        const dataPage2 = [
+            { id: 'CUS004', name: 'Rina Melati', phone: '081298765432', email: 'rina@gmail.com', tickets: '1', status: 'Aktif' },
+            { id: 'CUS005', name: 'Fajar Nugraha', phone: '085612349876', email: 'fajar@gmail.com', tickets: '0', status: 'Nonaktif' }
+        ];
+
+        function renderTable(page) {
+            tableBody.innerHTML = ''; // Kosongkan tabel dulu
+            
+            // Pilih data berdasarkan halaman aktif
+            const dataToShow = page === 1 ? dataPage1 : dataPage2;
+            
+            // Masukkan data ke tabel
+            dataToShow.forEach(data => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${data.id}</td>
+                    <td>${data.name}</td>
+                    <td>${data.phone}</td>
+                    <td>${data.email}</td>
+                    <td>${data.tickets}</td>
+                    <td>${data.status}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            // Ubah warna tombol (class active)
+            page1Btn.classList.toggle('active', page === 1);
+            page2Btn.classList.toggle('active', page === 2);
+        }
+
+        function changePage(page) {
+            // Batasi hanya ada 2 halaman
+            if (page < 1 || page > 2) return; 
+            
+            currentPage = page;
+            renderTable(currentPage);
+        }
+
+        // Event listener untuk klik masing-masing tombol
+        prevBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            changePage(currentPage - 1);
+        });
+
+        nextBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            changePage(currentPage + 1);
+        });
+
+        page1Btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            changePage(1);
+        });
+
+        page2Btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            changePage(2);
         });
     </script>
 </body>
