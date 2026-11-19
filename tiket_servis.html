@@ -59,7 +59,7 @@
             border-radius: 8px;
             text-decoration: none;
             color: #000;
-            font-weight: 600; /* Disamakan ketebalannya */
+            font-weight: 600;
             font-size: 15px;
             transition: 0.2s;
         }
@@ -313,8 +313,11 @@
             color: #000;
             font-weight: 600;
             font-size: 14px;
+            transition: 0.2s;
         }
+        
         .page-item.active { background-color: #A0C4F6; }
+        .page-item:hover:not(.active) { background-color: #EBF3FF; }
 
         /* --- MODAL POP-UP --- */
         .modal-overlay {
@@ -478,10 +481,10 @@
 
             <!-- PAGINATION -->
             <div class="pagination">
-                <a href="#" class="page-item">&lt;</a>
+                <a href="#" class="page-item"><</a>
                 <a href="#" class="page-item active">1</a>
                 <a href="#" class="page-item">2</a>
-                <a href="#" class="page-item">&gt;</a>
+                <a href="#" class="page-item">></a>
             </div>
         </div>
     </div>
@@ -491,7 +494,7 @@
         <div class="modal-box">
             <div class="modal-header">
                 <h2>Buat Tiket Baru</h2>
-                <button class="close-btn" id="closeModal">&times;</button>
+                <button class="close-btn" id="closeModal">×</button>
             </div>
             <form id="formTiket">
                 <div class="form-group">
@@ -523,7 +526,7 @@
     </div>
 
     <script>
-        // Dropdown Lonceng Notifikasi
+        // 1. Dropdown Lonceng Notifikasi
         const bellIcon = document.getElementById('bellIcon');
         const notifDropdown = document.getElementById('notifDropdown');
 
@@ -540,16 +543,18 @@
             });
         }
 
-        // Fitur Pencarian & Filter
+        // 2. Fitur Pencarian & Filter (Diperbarui untuk mendukung paginasi)
         const searchInput = document.getElementById('searchInput');
         const statusSelect = document.getElementById('statusSelect');
-        const tableRows = document.querySelectorAll('#ticketTable tr');
+        const tbody = document.getElementById('ticketTable');
 
         function filterData() {
             const keyword = searchInput.value.toLowerCase();
             const status = statusSelect.value;
+            // Ambil row terbaru setiap kali filter berjalan
+            const currentTableRows = document.querySelectorAll('#ticketTable tr');
 
-            tableRows.forEach(row => {
+            currentTableRows.forEach(row => {
                 const textContent = row.innerText.toLowerCase();
                 const rowStatus = row.getAttribute('data-status');
                 
@@ -567,13 +572,12 @@
         searchInput.addEventListener('input', filterData);
         statusSelect.addEventListener('change', filterData);
 
-        // Fitur Modal Pop-up
+        // 3. Fitur Modal Pop-up
         const modal = document.getElementById('ticketModal');
         const btnBuatTiket = document.getElementById('btnBuatTiket');
         const closeModal = document.getElementById('closeModal');
         const btnCancel = document.getElementById('btnCancel');
         const formTiket = document.getElementById('formTiket');
-        const tbody = document.getElementById('ticketTable');
 
         btnBuatTiket.addEventListener('click', () => modal.classList.add('show'));
         closeModal.addEventListener('click', () => modal.classList.remove('show'));
@@ -598,6 +602,85 @@
             modal.classList.remove('show');
             formTiket.reset();
         });
+
+        // 4. Fitur Paginasi Dummy (Pindah Halaman 1 & 2)
+        const pageItems = document.querySelectorAll('.page-item');
+        const prevPageBtn = pageItems[0]; // Tombol <
+        const page1Btn = pageItems[1]; // Tombol 1
+        const page2Btn = pageItems[2]; // Tombol 2
+        const nextPageBtn = pageItems[3]; // Tombol >
+
+        let currentPage = 1;
+
+        // Data untuk halaman 1 (Data asli)
+        const dataPage1 = [
+            { id: '#1027', name: 'Andi Pratama', device: 'MacBook', issue: 'Layar berkedip', status: 'Dalam perbaikan', tech: 'Rizky' },
+            { id: '#1026', name: 'Siti Aisyah', device: 'Laptop ASUS', issue: 'Overheat', status: 'Menunggu Persetujuan', tech: 'Galih' },
+            { id: '#1025', name: 'Budi Santoso', device: 'Laptop ACER', issue: 'Ganti RAM 8 GB', status: 'Diagnosis', tech: 'Andi' }
+        ];
+
+        // Data dummy untuk halaman 2 - DISESUAIKAN KHUSUS LAPTOP
+        const dataPage2 = [
+            { id: '#1024', name: 'Rina Melati', device: 'Laptop Lenovo', issue: 'Mati total', status: 'Diagnosis', tech: 'Budi' },
+            { id: '#1023', name: 'Fajar Nugraha', device: 'MacBook Air', issue: 'Baterai drop', status: 'Dalam perbaikan', tech: 'Rizky' }
+        ];
+
+        function renderTable(page) {
+            tbody.innerHTML = ''; // Kosongkan tabel
+            
+            const dataToShow = page === 1 ? dataPage1 : dataPage2;
+            
+            dataToShow.forEach(data => {
+                const tr = document.createElement('tr');
+                tr.setAttribute('data-status', data.status);
+                tr.innerHTML = `
+                    <td>${data.id}</td>
+                    <td>${data.name}</td>
+                    <td>${data.device}</td>
+                    <td>${data.issue}</td>
+                    <td>${data.status}</td>
+                    <td>${data.tech}</td>
+                    <td><a href="tiket_detail.html" class="btn-detail">Detail</a></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Update class active pada tombol
+            page1Btn.classList.toggle('active', page === 1);
+            page2Btn.classList.toggle('active', page === 2);
+
+            // Terapkan ulang filter jika ada yang sedang di-search/filter
+            filterData();
+        }
+
+        function changePage(page) {
+            // Batasi hanya ada 2 halaman
+            if (page < 1 || page > 2) return; 
+            currentPage = page;
+            renderTable(currentPage);
+        }
+
+        // Event listener klik tombol paginasi
+        prevPageBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            changePage(currentPage - 1);
+        });
+
+        nextPageBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            changePage(currentPage + 1);
+        });
+
+        page1Btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            changePage(1);
+        });
+
+        page2Btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            changePage(2);
+        });
+
     </script>
 </body>
 </html>
