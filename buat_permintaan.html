@@ -286,6 +286,7 @@
         <a href="dashboard_customer.html" class="menu-item">Dashboard</a>
         <a href="buat_permintaan.html" class="menu-item active">Buat Permintaan Service</a>
         <a href="tiket_saya.html" class="menu-item">Tiket Saya</a>
+        <a href="Produk&Layanan.html" class="menu-item">Produk & Layanan</a>
         <a href="riwayat_service.html" class="menu-item">Riwayat Service</a>
         <a href="chat.html" class="menu-item">Chat</a>
         <a href="profile.html" class="menu-item">Profile</a>
@@ -355,14 +356,17 @@
 
             <div class="form-section">
                 <div class="section-title">Upload Foto (opsional)</div>
-                <div class="upload-area">
+                <!-- Area upload diubah menjadi label agar bisa diklik dan trigger file input -->
+                <label class="upload-area" for="uploadImage">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                         <polyline points="17 8 12 3 7 8"></polyline>
                         <line x1="12" y1="3" x2="12" y2="15"></line>
                     </svg>
-                    <span>Drag & drop file di sini atau klik untuk memilih<br><small style="color: #666;">Format: JPG, PNG (maks. 5MB)</small></span>
-                </div>
+                    <span id="uploadText">Drag & drop file di sini atau klik untuk memilih<br><small style="color: #666;">Format: JPG, PNG (maks. 5MB)</small></span>
+                </label>
+                <!-- Input file disembunyikan -->
+                <input type="file" id="uploadImage" accept="image/jpeg, image/png" style="display: none;">
             </div>
 
             <div class="btn-submit-container">
@@ -373,6 +377,7 @@
     </div>
 
     <script>
+        // Script untuk Dropdown Notifikasi
         const bellIcon = document.getElementById('bellIcon');
         const notifDropdown = document.getElementById('notifDropdown');
 
@@ -385,6 +390,20 @@
             window.addEventListener('click', function(e) {
                 if (!notifDropdown.contains(e.target) && e.target !== bellIcon) {
                     notifDropdown.classList.remove('show');
+                }
+            });
+        }
+
+        // Script untuk menampilkan nama file gambar yang diupload
+        const uploadImage = document.getElementById('uploadImage');
+        const uploadText = document.getElementById('uploadText');
+
+        if (uploadImage) {
+            uploadImage.addEventListener('change', function() {
+                if (this.files && this.files.length > 0) {
+                    uploadText.innerHTML = `File terpilih: <strong style="color: #1E4E8C;">${this.files[0].name}</strong>`;
+                } else {
+                    uploadText.innerHTML = 'Drag & drop file di sini atau klik untuk memilih<br><small style="color: #666;">Format: JPG, PNG (maks. 5MB)</small>';
                 }
             });
         }
