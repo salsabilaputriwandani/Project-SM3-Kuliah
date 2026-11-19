@@ -185,13 +185,21 @@
             color: #000;
         }
 
+        /* --- TABLE SCROLLING AREA --- */
         .table-container {
             background-color: #FFF;
             border: 1px solid #000;
             border-radius: 8px;
-            overflow: hidden;
+            overflow-y: auto; /* Mengaktifkan scroll vertikal */
+            max-height: 250px; /* Batas tinggi tabel sebelum muncul scroll */
             margin-bottom: 30px;
         }
+
+        /* Modifikasi Scrollbar pada Tabel */
+        .table-container::-webkit-scrollbar { width: 8px; }
+        .table-container::-webkit-scrollbar-track { background: #f1f1f1; }
+        .table-container::-webkit-scrollbar-thumb { background: #8BB9F9; border-radius: 4px; }
+        .table-container::-webkit-scrollbar-thumb:hover { background: #4A89DE; }
 
         .qc-table {
             width: 100%;
@@ -209,6 +217,11 @@
             background-color: #B5D5F5;
             font-weight: 700;
             border-top: none; 
+            position: sticky; /* Membuat header tetap di atas saat di-scroll */
+            top: 0;
+            z-index: 10;
+            /* Box-shadow digunakan untuk mempertegas border bawah saat di-scroll */
+            box-shadow: 0 1px 0 #000;
         }
 
         .qc-table tr:first-child th:first-child { border-left: none; }
@@ -323,6 +336,25 @@
                             <td>Perbaikan Keyboard</td>
                             <td><a href="detail_qc.html" class="btn-detail">Detail</a></td>
                         </tr>
+                        <!-- Baris tambahan agar efek scroll terlihat -->
+                        <tr>
+                            <td>#1031</td>
+                            <td>Laptop Lenovo</td>
+                            <td>Pembersihan Kipas</td>
+                            <td><a href="detail_qc.html" class="btn-detail">Detail</a></td>
+                        </tr>
+                        <tr>
+                            <td>#1033</td>
+                            <td>Laptop ASUS</td>
+                            <td>Ganti Thermal Paste</td>
+                            <td><a href="detail_qc.html" class="btn-detail">Detail</a></td>
+                        </tr>
+                        <tr>
+                            <td>#1035</td>
+                            <td>MacBook</td>
+                            <td>Pengecekan Booting</td>
+                            <td><a href="detail_qc.html" class="btn-detail">Detail</a></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -344,13 +376,32 @@
                             <td>#1024</td>
                             <td>Laptop ACER</td>
                             <td>Penggantian Layar</td>
-                            <td><a href="detail_qc.html" class="btn-detail">Detail</a></td>
+                            <td><a href="detail_qc.html?status=selesai" class="btn-detail">Detail</a></td>
                         </tr>
                         <tr>
                             <td>#1025</td>
                             <td>Laptop HP</td>
                             <td>Perbaikan Layar</td>
-                            <td><a href="detail_qc.html" class="btn-detail">Detail</a></td>
+                            <td><a href="detail_qc.html?status=selesai" class="btn-detail">Detail</a></td>
+                        </tr>
+                        <!-- Baris tambahan agar efek scroll terlihat -->
+                        <tr>
+                            <td>#1021</td>
+                            <td>MacBook Pro</td>
+                            <td>Penggantian Baterai</td>
+                            <td><a href="detail_qc.html?status=selesai" class="btn-detail">Detail</a></td>
+                        </tr>
+                        <tr>
+                            <td>#1019</td>
+                            <td>Laptop Dell</td>
+                            <td>Install Ulang OS</td>
+                            <td><a href="detail_qc.html?status=selesai" class="btn-detail">Detail</a></td>
+                        </tr>
+                        <tr>
+                            <td>#1015</td>
+                            <td>Laptop Lenovo</td>
+                            <td>Upgrade SSD 512GB</td>
+                            <td><a href="detail_qc.html?status=selesai" class="btn-detail">Detail</a></td>
                         </tr>
                     </tbody>
                 </table>
