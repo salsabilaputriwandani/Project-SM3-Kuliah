@@ -548,6 +548,47 @@
             alert("Hasil disimpan. Status tiket diubah menjadi SELESAI karena telah lulus QC.");
             window.location.href = "quality_control.html";
         }
+
+        // ==========================================
+        // LOGIKA UNTUK TIKET DENGAN STATUS SELESAI
+        // ==========================================
+        document.addEventListener("DOMContentLoaded", function() {
+            // Ambil parameter status dari URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const status = urlParams.get('status');
+
+            // Jika statusnya selesai, jalankan mode Read-Only
+            if (status === 'selesai') {
+                // 1. Tambahkan label (SELESAI) pada judul halaman
+                const pageTitle = document.querySelector('.page-title');
+                if (pageTitle) pageTitle.innerText += ' (SELESAI)';
+
+                // 2. Matikan semua pilihan radio button (Checklist & Hasil QC)
+                const radios = document.querySelectorAll('input[type="radio"]');
+                radios.forEach(radio => {
+                    radio.disabled = true; // Tidak bisa diklik
+                });
+
+                // 3. Matikan kolom Catatan QC agar tidak bisa diketik
+                const textarea = document.querySelector('.catatan-textarea');
+                if (textarea) {
+                    textarea.readOnly = true;
+                    textarea.style.backgroundColor = '#F6F7F9'; // Beri warna abu-abu tanda tidak aktif
+                }
+
+                // 4. Sembunyikan tombol aksi (Simpan & Kembalikan / Simpan & Selesai)
+                const buttonContainer = document.querySelector('.button-container');
+                if (buttonContainer) {
+                    buttonContainer.style.display = 'none';
+                }
+
+                // 5. Sembunyikan info box karena sudah tidak relevan
+                const infoBox = document.querySelector('.info-box');
+                if (infoBox) {
+                    infoBox.style.display = 'none';
+                }
+            }
+        });
     </script>
 </body>
 </html>
