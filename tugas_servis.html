@@ -229,12 +229,28 @@
             color: #000;
         }
 
-        /* TABLE */
+        /* --- TABLE SCROLLING AREA --- */
         .table-container {
             background-color: #FFFFFF;
             border: 2px solid #000;
             border-radius: 8px;
-            overflow: hidden;
+            overflow-y: auto; /* Mengaktifkan scroll vertikal */
+            max-height: 400px; /* Batas tinggi tabel sebelum muncul scroll */
+        }
+
+        /* Modifikasi Scrollbar pada Tabel */
+        .table-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .table-container::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        .table-container::-webkit-scrollbar-thumb {
+            background: #8BB9F9; 
+            border-radius: 4px;
+        }
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background: #4A89DE; 
         }
 
         table {
@@ -253,6 +269,11 @@
         th {
             background-color: #BCD9FB;
             font-weight: 600;
+            position: sticky; /* Membuat header tetap di atas saat di-scroll */
+            top: 0;
+            z-index: 10;
+            /* Box-shadow digunakan untuk mempertegas border bawah saat di-scroll */
+            box-shadow: 0 2px 0 #000;
         }
 
         tr:nth-child(even) td { background-color: #EEEEEE; }
@@ -396,6 +417,31 @@
                             <td>Tidak ada suara</td>
                             <td>Dalam perbaikan</td>
                             <td>Rendah</td>
+                            <td><a href="detail_tiket_diagnosis.html" class="btn-detail">Detail</a></td>
+                        </tr>
+                        <!-- Baris tambahan agar efek scroll langsung terlihat -->
+                        <tr data-status="Diagnosis">
+                            <td>#1030</td>
+                            <td>Lenovo ThinkPad</td>
+                            <td>Keyboard sebagian mati</td>
+                            <td>Diagnosis</td>
+                            <td>Sedang</td>
+                            <td><a href="detail_tiket_diagnosis.html" class="btn-detail">Detail</a></td>
+                        </tr>
+                        <tr data-status="Menunggu suku cadang">
+                            <td>#1031</td>
+                            <td>PC Rakitan</td>
+                            <td>VGA Error / Artefak</td>
+                            <td>Menunggu suku cadang</td>
+                            <td>Tinggi</td>
+                            <td><a href="detail_tiket_diagnosis.html" class="btn-detail">Detail</a></td>
+                        </tr>
+                        <tr data-status="Dalam perbaikan">
+                            <td>#1032</td>
+                            <td>Laptop Dell</td>
+                            <td>Baterai kembung</td>
+                            <td>Dalam perbaikan</td>
+                            <td>Sedang</td>
                             <td><a href="detail_tiket_diagnosis.html" class="btn-detail">Detail</a></td>
                         </tr>
                     </tbody>
