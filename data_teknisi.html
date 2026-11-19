@@ -15,7 +15,7 @@
 
         body {
             display: flex;
-            background-color: #D6E8FF; /* Background biru muda sesuai figma */
+            background-color: #D6E8FF; 
             min-height: 100vh;
             color: #000;
         }
@@ -263,7 +263,7 @@
             background-color: #EEEEEE;
         }
 
-        /* Tampilan Blok Warna Status (Hijau untuk Aktif, Merah untuk Nonaktif) */
+        /* Tampilan Blok Warna Status */
         .status-cell {
             padding: 0 !important;
             vertical-align: middle;
@@ -276,16 +276,16 @@
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            color: transparent; /* Sesuai Figma: blok warna tanpa teks atau warna penuh */
+            color: transparent; 
             min-height: 48px;
         }
 
         .status-block.aktif {
-            background-color: #4CD964; /* Warna Hijau Cerah */
+            background-color: #4CD964; 
         }
 
         .status-block.nonaktif {
-            background-color: #FF4D4D; /* Warna Merah Cerah */
+            background-color: #FF4D4D; 
         }
 
         /* PAGINATION */
@@ -478,7 +478,7 @@
             <div class="search-container">
                 <div class="search-box">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <input type="text" id="searchTechnician" placeholder="Cari nama atau spesialisasi...">
+                    <input type="text" id="searchTechnician" placeholder="Cari nama...">
                 </div>
             </div>
 
@@ -549,10 +549,10 @@
 
             <!-- PAGINATION -->
             <div class="pagination-container">
-                <a href="#" class="page-btn">&lt;</a>
+                <a href="#" class="page-btn"><</a>
                 <a href="#" class="page-btn active">1</a>
                 <a href="#" class="page-btn">2</a>
-                <a href="#" class="page-btn">&gt;</a>
+                <a href="#" class="page-btn">></a>
             </div>
 
         </div>
@@ -563,7 +563,7 @@
         <div class="modal-card">
             <div class="modal-header">
                 <h2>Tambah Teknisi Baru</h2>
-                <button class="close-modal" id="closeModalBtn">&times;</button>
+                <button class="close-modal" id="closeModalBtn">×</button>
             </div>
             <form id="addTechnicianForm">
                 <div class="form-group">
@@ -584,7 +584,7 @@
                 </div>
                 <div class="form-group">
                     <label>Spesialisasi</label>
-                    <input type="text" id="techSpec" placeholder="Contoh: Smartphone / Laptop & PC" required>
+                    <input type="text" id="techSpec" value="Laptop" required>
                 </div>
                 <div class="form-group">
                     <label>Status</label>
@@ -624,7 +624,7 @@
             });
         }
 
-        // 2. Live Search Berdasarkan Nama atau Spesialisasi
+        // 2. Live Search Berdasarkan Nama
         const searchInput = document.getElementById('searchTechnician');
         const tableBody = document.getElementById('technicianTableBody');
 
@@ -635,9 +635,8 @@
 
                 rows.forEach(row => {
                     const name = row.children[1].textContent.toLowerCase();
-                    const spec = row.children[4].textContent.toLowerCase();
 
-                    if (name.includes(keyword) || spec.includes(keyword)) {
+                    if (name.includes(keyword)) {
                         row.style.display = '';
                     } else {
                         row.style.display = 'none';
@@ -654,7 +653,7 @@
         const addTechnicianForm = document.getElementById('addTechnicianForm');
 
         function openModal() { modal.classList.add('show'); }
-        function closeModal() { modal.classList.remove('show'); addTechnicianForm.reset(); }
+        function closeModal() { modal.classList.remove('show'); addTechnicianForm.reset(); document.getElementById('techSpec').value = "Laptop"; }
 
         openModalBtn.addEventListener('click', openModal);
         closeModalBtn.addEventListener('click', closeModal);
@@ -671,10 +670,8 @@
             const status = document.getElementById('techStatus').value;
             const maxTask = document.getElementById('techMax').value;
 
-            // Buat baris baru
             const newRow = document.createElement('tr');
             
-            // Penentuan blok warna status (Aktif = Hijau, Nonaktif = Merah)
             const statusClass = status === 'aktif' ? 'aktif' : 'nonaktif';
             const statusTitle = status === 'aktif' ? 'Aktif' : 'Tidak Aktif';
 
@@ -692,6 +689,82 @@
 
             tableBody.appendChild(newRow);
             closeModal();
+        });
+
+        // 4. Fitur Paginasi Dummy (Pindah Halaman 1 & 2)
+        const pageBtns = document.querySelectorAll('.page-btn');
+        const prevBtn = pageBtns[0]; 
+        const page1Btn = pageBtns[1]; 
+        const page2Btn = pageBtns[2]; 
+        const nextBtn = pageBtns[3]; 
+
+        let currentPage = 1;
+
+        // Data untuk halaman 1 
+        const dataPage1 = [
+            { id: 'TEC001', name: 'Raka Putra', phone: '081200000001', email: 'raka@servicecenter.com', spec: 'Laptop', status: 'aktif', activeTask: '8', maxTask: '10', done: '6' },
+            { id: 'TEC002', name: 'Dimas Arya', phone: '081200000002', email: 'dimas@servicecenter.com', spec: 'Laptop', status: 'aktif', activeTask: '8', maxTask: '10', done: '8' },
+            { id: 'TEC003', name: 'Rizky Saputra', phone: '081200000003', email: 'rizky@servicecenter.com', spec: 'Laptop', status: 'aktif', activeTask: '10', maxTask: '15', done: '10' },
+            { id: 'TEC004', name: 'Rehan Mustofa', phone: '081200000004', email: 'rehan@servicecenter.com', spec: 'Laptop', status: 'nonaktif', activeTask: '5', maxTask: '8', done: '3' }
+        ];
+
+        // Data dummy untuk halaman 2
+        const dataPage2 = [
+            { id: 'TEC005', name: 'Budi Wibowo', phone: '081200000005', email: 'budi@servicecenter.com', spec: 'Laptop', status: 'aktif', activeTask: '4', maxTask: '10', done: '12' },
+            { id: 'TEC006', name: 'Andi Hermansyah', phone: '081200000006', email: 'andi@servicecenter.com', spec: 'Laptop', status: 'aktif', activeTask: '7', maxTask: '12', done: '20' }
+        ];
+
+        function renderTable(page) {
+            tableBody.innerHTML = ''; 
+            const dataToShow = page === 1 ? dataPage1 : dataPage2;
+            
+            dataToShow.forEach(data => {
+                const row = document.createElement('tr');
+                const statusClass = data.status;
+                const statusTitle = data.status === 'aktif' ? 'Aktif' : 'Tidak Aktif';
+                
+                row.innerHTML = `
+                    <td>${data.id}</td>
+                    <td>${data.name}</td>
+                    <td>${data.phone}</td>
+                    <td>${data.email}</td>
+                    <td>${data.spec}</td>
+                    <td class="status-cell"><div class="status-block ${statusClass}" title="${statusTitle}"></div></td>
+                    <td>${data.activeTask}</td>
+                    <td>${data.maxTask}</td>
+                    <td>${data.done}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            page1Btn.classList.toggle('active', page === 1);
+            page2Btn.classList.toggle('active', page === 2);
+        }
+
+        function changePage(page) {
+            if (page < 1 || page > 2) return; 
+            currentPage = page;
+            renderTable(currentPage);
+        }
+
+        prevBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            changePage(currentPage - 1);
+        });
+
+        nextBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            changePage(currentPage + 1);
+        });
+
+        page1Btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            changePage(1);
+        });
+
+        page2Btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            changePage(2);
         });
     </script>
 </body>
